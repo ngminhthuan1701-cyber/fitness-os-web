@@ -194,10 +194,29 @@ function App() {
     try {
       const saved = JSON.parse(localStorage.getItem('fitness-os'));
       if (!saved) return seed;
+      
+      // Tự động bổ sung ảnh thật, mẹo nấu ăn và link video từ defaultRecipes nếu dữ liệu cũ trong localStorage bị thiếu
+      const rawRecipes = (saved.recipes && saved.recipes.length) ? saved.recipes : defaultRecipes;
+      const recipes = rawRecipes.map(r => {
+        const def = defaultRecipes.find(d => d.id === r.id || d.name === r.name);
+        if (def) {
+          return {
+            ...def,
+            ...r,
+            image: r.image || def.image,
+            beginnerTip: r.beginnerTip || def.beginnerTip,
+            videoUrl: r.videoUrl || def.videoUrl
+          };
+        }
+        return r;
+      });
+
       return {
         ...seed,
         ...saved,
-        recipes: saved.recipes && saved.recipes.length ? saved.recipes : defaultRecipes,
+        recipes,
+        combos: (saved.combos && saved.combos.length) ? saved.combos : defaultCombos,
+        myRecipes: saved.myRecipes || seed.myRecipes,
         exercises: saved.exercises && saved.exercises.length ? saved.exercises : seed.exercises,
         history: saved.history || initialHistory,
         todayStatus: saved.todayStatus || 'workout',
@@ -218,6 +237,25 @@ function App() {
       return false;
     }
   });
+
+  // Theme màu chủ đạo: 'green' (Xanh lá mát mẻ) hoặc 'blue' (Xanh biển)
+  const [colorTheme, setColorTheme] = useState(() => {
+    try {
+      return localStorage.getItem('fitness-color-theme') || 'green'; // Mặc định xanh lá mát mẻ
+    } catch {
+      return 'green';
+    }
+  });
+
+  // Trạng thái thu gọn / mở rộng menu để xem Full Màn Hình
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('fitness-sidebar-collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
   const [toast, setToast] = useState('');
   const fileInputRef = useRef(null);
 
@@ -229,6 +267,19 @@ function App() {
     const next = !dark;
     setDark(next);
     localStorage.setItem('fitness-theme', next ? 'dark' : 'light');
+  };
+
+  const toggleSidebar = () => {
+    const next = !sidebarCollapsed;
+    setSidebarCollapsed(next);
+    localStorage.setItem('fitness-sidebar-collapsed', String(next));
+  };
+
+  const toggleColorTheme = () => {
+    const next = colorTheme === 'green' ? 'blue' : 'green';
+    setColorTheme(next);
+    localStorage.setItem('fitness-color-theme', next);
+    notify(`Đã chuyển theme: ${next === 'green' ? '🌿 Xanh lá mát mẻ' : '🌊 Xanh biển Pastel'}`);
   };
 
   const consumed = useMemo(() => data.meals.reduce((s, m) => s + (Number(m.cal) || 0), 0), [data.meals]);
@@ -481,7 +532,7 @@ function App() {
   ];
 
   return (
-    <div className={dark ? 'app dark' : 'app'}>
+    <div className={`app ${colorTheme === 'green' ? 'theme-green' : ''} ${dark ? 'dark' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`.trim()}>
       <input
         type="file"
         ref={fileInputRef}
@@ -495,8 +546,15 @@ function App() {
           <div className="logo">⚡</div>
           <div>
             <b>FITNESS OS</b>
-            <span>PASTEL BLUE SYSTEM</span>
+            <span>{colorTheme === 'green' ? 'EMERALD GREEN SYSTEM' : 'PASTEL BLUE SYSTEM'}</span>
           </div>
+          <button
+            className="sidebar-toggle-btn"
+            onClick={toggleSidebar}
+            title="Thu gọn menu để xem Full màn hình"
+          >
+            <I.PanelLeftClose size={17} />
+          </button>
         </div>
 
         <nav>
@@ -513,9 +571,13 @@ function App() {
         </nav>
 
         <div className="sidebar-bottom">
+          <button onClick={toggleColorTheme}>
+            <span style={{ fontSize: 16 }}>{colorTheme === 'green' ? '🌿' : '🌊'}</span>
+            {colorTheme === 'green' ? 'Giao diện: Xanh lá mát mẻ' : 'Giao diện: Xanh biển Pastel'}
+          </button>
           <button onClick={toggleTheme}>
             <I.SunMoon size={18} />
-            {dark ? 'Giao diện Sáng Pastel' : 'Giao diện Tối'}
+            {dark ? 'Giao diện Sáng' : 'Giao diện Tối'}
           </button>
           <button onClick={() => setPage('Profile')}>
             <I.Settings size={18} />
@@ -526,22 +588,40 @@ function App() {
 
       <main className="main">
         <header>
-          <div>
-            <div className="eyebrow">HÔM NAY · 06 THÁNG 10, 2026</div>
-            <h1>
-              {page === 'Dashboard' && `Chào ngày mới, ${data.profile.name} 👋`}
-              {page === 'Calendar' && 'Lịch tháng & Thống kê Chuyên cần 📅'}
-              {page === 'Workout' && 'Lịch tập & Nhật ký buổi tập 🏋️'}
-              {page === 'Recipes' && 'Khám phá Món ăn & Video nấu ăn 🍳'}
-              {page === 'Nutrition' && 'Nhật ký Dinh dưỡng & Bữa ăn 🥗'}
-              {page === 'Recovery' && 'Điểm phục hồi & Sẵn sàng tập luyện 🟢'}
-              {page === 'Progress' && 'Tiến độ Cân nặng & Sức mạnh 📈'}
-              {page === 'Money' && 'Quản lý Ngân sách & Chi tiêu 💰'}
-              {page === 'AI Coach' && 'AI Fitness Coach Thông Minh 🤖'}
-              {page === 'Profile' && 'Cài đặt Hồ sơ, Sao lưu & Database ⚙️'}
-            </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <button
+              className="icon-btn"
+              onClick={toggleSidebar}
+              title={sidebarCollapsed ? "Mở menu điều hướng (Phím tắt)" : "Thu gọn menu để xem Full màn hình"}
+              style={sidebarCollapsed ? { background: 'var(--primary)', color: '#fff', borderColor: 'var(--primary)' } : {}}
+            >
+              {sidebarCollapsed ? <I.Menu size={20} /> : <I.PanelLeftClose size={18} />}
+            </button>
+            <div>
+              <div className="eyebrow">HÔM NAY · 06 THÁNG 10, 2026</div>
+              <h1>
+                {page === 'Dashboard' && `Chào ngày mới, ${data.profile.name} 👋`}
+                {page === 'Calendar' && 'Lịch tháng & Thống kê Chuyên cần 📅'}
+                {page === 'Workout' && 'Lịch tập & Nhật ký buổi tập 🏋️'}
+                {page === 'Recipes' && 'Khám phá Món ăn & Video nấu ăn 🍳'}
+                {page === 'Nutrition' && 'Nhật ký Dinh dưỡng & Bữa ăn 🥗'}
+                {page === 'Recovery' && 'Điểm phục hồi & Sẵn sàng tập luyện 🟢'}
+                {page === 'Progress' && 'Tiến độ Cân nặng & Sức mạnh 📈'}
+                {page === 'Money' && 'Quản lý Ngân sách & Chi tiêu 💰'}
+                {page === 'AI Coach' && 'AI Fitness Coach Thông Minh 🤖'}
+                {page === 'Profile' && 'Cài đặt Hồ sơ, Sao lưu & Database ⚙️'}
+              </h1>
+            </div>
           </div>
           <div className="header-actions">
+            {/* Nút Đổi Theme Xanh Lá / Xanh Biển */}
+            <button
+              className="icon-btn"
+              onClick={toggleColorTheme}
+              title={colorTheme === 'green' ? 'Đang dùng: 🌿 Xanh lá mát mẻ (Bấm để đổi sang Xanh biển 🌊)' : 'Đang dùng: 🌊 Xanh biển (Bấm để đổi sang Xanh lá 🌿)'}
+            >
+              <span style={{ fontSize: 17 }}>{colorTheme === 'green' ? '🌿' : '🌊'}</span>
+            </button>
             <button className="icon-btn" onClick={handleCloudSync} title="Lưu nhanh lên Supabase Cloud (Đám mây)">
               <I.CloudUpload size={18} />
             </button>
@@ -1058,15 +1138,15 @@ function Dashboard({
               <b>{calPercent}%</b>
             </div>
             <div className="bar" style={{ marginBottom: 12 }}>
-              <i style={{ width: `${calPercent}%`, background: 'linear-gradient(90deg, #f59e0b, #ef4444)' }} />
+              <i style={{ width: `${Math.min(100, Math.max(0, calPercent))}%`, background: 'linear-gradient(90deg, #f59e0b, #ef4444)' }} />
             </div>
 
             <div className="today-progress-header">
               <span>Tiến độ protein ({protein} / {data.profile.protein}g)</span>
-              <b style={{ color: '#0284c7' }}>{protPercent}%</b>
+              <b style={{ color: 'var(--primary)' }}>{protPercent}%</b>
             </div>
             <div className="bar">
-              <i style={{ width: `${protPercent}%`, background: 'linear-gradient(90deg, #0284c7, #38bdf8)' }} />
+              <i style={{ width: `${Math.min(100, Math.max(0, protPercent))}%`, background: 'linear-gradient(90deg, var(--primary), #38bdf8)' }} />
             </div>
           </div>
 
@@ -2522,7 +2602,9 @@ function RecipesPage({
                     </span>
                   </div>
                 ) : (
-                  <div className="food-emoji" style={{ fontSize: 44, padding: '16px 0' }}>{recipe.emoji}</div>
+                  <div className="recipe-img-placeholder">
+                    <span>{recipe.emoji || '🍲'}</span>
+                  </div>
                 )}
 
                 <div className="recipe-header" style={{ marginTop: 4 }}>
@@ -2669,7 +2751,9 @@ function RecipesPage({
                       </span>
                     </div>
                   ) : (
-                    <div className="food-emoji" style={{ fontSize: 44, padding: '16px 0' }}>{recipe.emoji}</div>
+                    <div className="recipe-img-placeholder">
+                      <span>{recipe.emoji || '🍽️'}</span>
+                    </div>
                   )}
 
                   <div className="recipe-header" style={{ marginTop: 4 }}>
