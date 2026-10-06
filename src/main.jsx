@@ -203,68 +203,296 @@ function ThemeAnimationOverlay({ effect, onDismiss }) {
 
   return (
     <div className="theme-effect-overlay" onClick={onDismiss} title="Nhấp để ẩn hiệu ứng">
+      {/* 1. THEME HỒNG: CÂY HOA ANH ĐÀO NHẠT BÙNG NỞ */}
       {effect === 'pink' && (
         <>
-          {Array.from({ length: 28 }).map((_, i) => (
+          {Array.from({ length: 18 }).map((_, i) => (
             <div
               key={i}
-              className="sakura-petal"
+              className="tree-burst-particle"
               style={{
-                left: `${((i * 3.6) + (i % 3) * 1.5) % 96}%`,
-                width: 13 + (i % 4) * 4,
-                height: 17 + (i % 3) * 5,
-                animationDelay: `${(i * 0.12).toFixed(2)}s`,
-                animationDuration: `${(2.8 + (i % 5) * 0.35).toFixed(2)}s`,
-                opacity: 0.9
+                left: `${20 + ((i * 4.2 + (i % 3) * 6) % 60)}%`,
+                bottom: '12%',
+                fontSize: `${18 + (i % 3) * 6}px`,
+                animationDelay: `${(0.4 + i * 0.12).toFixed(2)}s`,
+                animationDuration: `${(2.8 + (i % 4) * 0.35).toFixed(2)}s`
               }}
-            />
+            >
+              {['🌸', '💮', '✨', '🌸'][i % 4]}
+            </div>
           ))}
+
+          <div className="theme-tree-stage">
+            <svg
+              className="tree-svg-animated"
+              viewBox="0 0 600 650"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <radialGradient id="sakuraGlow" cx="50%" cy="40%" r="50%">
+                  <stop offset="0%" stopColor="#fdf2f8" stopOpacity="0.8" />
+                  <stop offset="60%" stopColor="#fce7f3" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#fbcfe8" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id="sakuraTrunk" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#3e2723" />
+                  <stop offset="60%" stopColor="#4e342e" />
+                  <stop offset="100%" stopColor="#6d4c41" />
+                </linearGradient>
+              </defs>
+
+              {/* Hào quang phấn hồng dịu mát */}
+              <circle cx="300" cy="270" r="230" fill="url(#sakuraGlow)" />
+
+              <g className="tree-sway-group">
+                {/* Thân cây hoa anh đào uốn lượn cổ thụ */}
+                <g className="tree-root-trunk">
+                  <path
+                    d="M260,620 C270,550 280,470 285,410 C290,360 275,320 260,280 C280,310 305,330 315,370 C325,430 330,530 340,620 Z"
+                    fill="url(#sakuraTrunk)"
+                  />
+                  {/* Gốc cây bám đất */}
+                  <path d="M240,620 Q270,610 300,618 Q330,610 360,620 Z" fill="#3e2723" />
+                </g>
+
+                {/* Các nhánh cành thanh nhã */}
+                <g className="tree-branches-mesh">
+                  <path d="M285,390 Q240,350 180,340 Q230,360 285,405 Z" fill="#5d4037" />
+                  <path d="M310,380 Q360,340 420,330 Q370,355 315,395 Z" fill="#5d4037" />
+                  <path d="M275,320 Q230,270 170,260 Q220,280 280,330 Z" fill="#6d4c41" />
+                  <path d="M305,310 Q350,260 410,250 Q360,275 300,320 Z" fill="#6d4c41" />
+                  <path d="M290,280 Q295,220 300,180 Q305,220 295,280 Z" fill="#6d4c41" />
+                </g>
+
+                {/* Tán hoa anh đào nở rộ bồng bềnh nhạt thanh khiết */}
+                <g className="tree-canopy-blossom">
+                  {/* Tầng hoa nền */}
+                  <circle cx="300" cy="210" r="85" fill="#fbcfe8" opacity="0.95" />
+                  <circle cx="210" cy="270" r="75" fill="#f9a8d4" opacity="0.9" />
+                  <circle cx="390" cy="260" r="80" fill="#fbcfe8" opacity="0.92" />
+                  <circle cx="160" cy="330" r="60" fill="#fce7f3" opacity="0.95" />
+                  <circle cx="440" cy="320" r="65" fill="#f9a8d4" opacity="0.9" />
+
+                  {/* Tầng hoa chính giữa */}
+                  <circle cx="260" cy="180" r="65" fill="#fce7f3" />
+                  <circle cx="340" cy="175" r="70" fill="#fdf2f8" />
+                  <circle cx="300" cy="140" r="60" fill="#fce7f3" />
+                  <circle cx="230" cy="230" r="65" fill="#f472b6" opacity="0.8" />
+                  <circle cx="370" cy="220" r="65" fill="#f472b6" opacity="0.8" />
+                  <circle cx="300" cy="260" r="70" fill="#fce7f3" />
+
+                  {/* Cụm hoa nổi bật điểm xuyết */}
+                  <circle cx="190" cy="300" r="45" fill="#fdf2f8" />
+                  <circle cx="410" cy="290" r="48" fill="#fdf2f8" />
+                  <circle cx="270" cy="240" r="50" fill="#fdf2f8" />
+                  <circle cx="330" cy="235" r="52" fill="#fce7f3" />
+
+                  {/* Các bông hoa anh đào 5 cánh nhỏ xinh điểm xuyết */}
+                  <text x="285" y="150" fontSize="22">🌸</text>
+                  <text x="210" y="240" fontSize="24">🌸</text>
+                  <text x="360" y="220" fontSize="22">🌸</text>
+                  <text x="170" y="310" fontSize="20">🌸</text>
+                  <text x="400" y="300" fontSize="20">🌸</text>
+                  <text x="300" y="280" fontSize="24">🌸</text>
+                </g>
+              </g>
+            </svg>
+          </div>
         </>
       )}
 
+      {/* 2. THEME MÙA THU: CÂY MÙA THU VÀNG ẤM ÁP */}
       {effect === 'autumn' && (
         <>
-          {Array.from({ length: 28 }).map((_, i) => {
-            const icons = ['🍂', '🍁', '🌾', '🍂', '🍁'];
-            const leaf = icons[i % icons.length];
-            return (
-              <div
-                key={i}
-                className="autumn-leaf-item"
-                style={{
-                  left: `${((i * 3.6) + (i % 4) * 1.8) % 96}%`,
-                  fontSize: `${20 + (i % 4) * 6}px`,
-                  animationDelay: `${(i * 0.12).toFixed(2)}s`,
-                  animationDuration: `${(3.0 + (i % 4) * 0.35).toFixed(2)}s`
-                }}
-              >
-                {leaf}
-              </div>
-            );
-          })}
+          {Array.from({ length: 18 }).map((_, i) => (
+            <div
+              key={i}
+              className="tree-burst-particle"
+              style={{
+                left: `${20 + ((i * 4.2 + (i % 3) * 6) % 60)}%`,
+                bottom: '12%',
+                fontSize: `${18 + (i % 3) * 6}px`,
+                animationDelay: `${(0.4 + i * 0.12).toFixed(2)}s`,
+                animationDuration: `${(2.8 + (i % 4) * 0.35).toFixed(2)}s`
+              }}
+            >
+              {['🍂', '🍁', '✨', '🌾'][i % 4]}
+            </div>
+          ))}
+
+          <div className="theme-tree-stage">
+            <svg
+              className="tree-svg-animated"
+              viewBox="0 0 600 650"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <radialGradient id="autumnGlow" cx="50%" cy="40%" r="50%">
+                  <stop offset="0%" stopColor="#fef3c7" stopOpacity="0.8" />
+                  <stop offset="60%" stopColor="#fde68a" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id="autumnTrunk" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#2c1810" />
+                  <stop offset="60%" stopColor="#452718" />
+                  <stop offset="100%" stopColor="#623a23" />
+                </linearGradient>
+              </defs>
+
+              {/* Hào quang ấm áp mùa thu */}
+              <circle cx="300" cy="270" r="230" fill="url(#autumnGlow)" />
+
+              <g className="tree-sway-group">
+                {/* Thân cây mùa thu sừng sững */}
+                <g className="tree-root-trunk">
+                  <path
+                    d="M255,620 C265,540 275,460 282,410 C290,360 275,320 265,280 C285,310 305,330 315,370 C325,430 335,530 345,620 Z"
+                    fill="url(#autumnTrunk)"
+                  />
+                  <path d="M235,620 Q270,610 300,618 Q335,610 365,620 Z" fill="#2c1810" />
+                </g>
+
+                {/* Nhánh cây */}
+                <g className="tree-branches-mesh">
+                  <path d="M285,390 Q235,350 175,340 Q225,360 285,405 Z" fill="#452718" />
+                  <path d="M310,380 Q365,340 425,330 Q375,355 315,395 Z" fill="#452718" />
+                  <path d="M275,320 Q225,270 165,260 Q215,280 280,330 Z" fill="#623a23" />
+                  <path d="M305,310 Q355,260 415,250 Q365,275 300,320 Z" fill="#623a23" />
+                  <path d="M290,280 Q295,220 300,180 Q305,220 290,280 Z" fill="#623a23" />
+                </g>
+
+                {/* Tán lá vàng mùa thu rực rỡ */}
+                <g className="tree-canopy-blossom">
+                  <circle cx="300" cy="210" r="85" fill="#f59e0b" opacity="0.95" />
+                  <circle cx="210" cy="270" r="75" fill="#d97706" opacity="0.92" />
+                  <circle cx="390" cy="260" r="80" fill="#b45309" opacity="0.9" />
+                  <circle cx="160" cy="330" r="60" fill="#f59e0b" opacity="0.95" />
+                  <circle cx="440" cy="320" r="65" fill="#d97706" opacity="0.92" />
+
+                  {/* Tầng lá vàng mật ong */}
+                  <circle cx="260" cy="180" r="65" fill="#fbbf24" />
+                  <circle cx="340" cy="175" r="70" fill="#fef08a" />
+                  <circle cx="300" cy="140" r="60" fill="#f59e0b" />
+                  <circle cx="230" cy="230" r="65" fill="#ea580c" opacity="0.85" />
+                  <circle cx="370" cy="220" r="65" fill="#f59e0b" />
+                  <circle cx="300" cy="260" r="70" fill="#fbbf24" />
+
+                  {/* Tán lá sáng điểm xuyết */}
+                  <circle cx="190" cy="300" r="45" fill="#fde68a" />
+                  <circle cx="410" cy="290" r="48" fill="#fde68a" />
+                  <circle cx="270" cy="240" r="50" fill="#fef08a" />
+                  <circle cx="330" cy="235" r="52" fill="#fbbf24" />
+
+                  {/* Lá phong biểu tượng */}
+                  <text x="285" y="150" fontSize="22">🍁</text>
+                  <text x="210" y="240" fontSize="24">🍂</text>
+                  <text x="360" y="220" fontSize="22">🍁</text>
+                  <text x="170" y="310" fontSize="20">🍂</text>
+                  <text x="400" y="300" fontSize="20">🍁</text>
+                  <text x="300" y="280" fontSize="24">🍂</text>
+                </g>
+              </g>
+            </svg>
+          </div>
         </>
       )}
 
+      {/* 3. THEME XANH LÁ: CÂY XANH ĐẠI THỤ MỌC LÊN TO LỚN TƯƠI MÁT */}
       {effect === 'green' && (
         <>
-          {Array.from({ length: 26 }).map((_, i) => {
-            const icons = ['🍃', '🌿', '🌱', '🍃', '🌿'];
-            const leaf = icons[i % icons.length];
-            return (
-              <div
-                key={i}
-                className="green-wind-leaf-item"
-                style={{
-                  top: `${((i * 3.8) + (i % 3) * 2.2) % 92}%`,
-                  fontSize: `${20 + (i % 4) * 6}px`,
-                  animationDelay: `${(i * 0.11).toFixed(2)}s`,
-                  animationDuration: `${(2.4 + (i % 4) * 0.3).toFixed(2)}s`
-                }}
-              >
-                {leaf}
-              </div>
-            );
-          })}
+          {Array.from({ length: 18 }).map((_, i) => (
+            <div
+              key={i}
+              className="tree-burst-particle"
+              style={{
+                left: `${20 + ((i * 4.2 + (i % 3) * 6) % 60)}%`,
+                bottom: '12%',
+                fontSize: `${18 + (i % 3) * 6}px`,
+                animationDelay: `${(0.4 + i * 0.12).toFixed(2)}s`,
+                animationDuration: `${(2.8 + (i % 4) * 0.35).toFixed(2)}s`
+              }}
+            >
+              {['🍃', '🌿', '✨', '🌱'][i % 4]}
+            </div>
+          ))}
+
+          <div className="theme-tree-stage">
+            <svg
+              className="tree-svg-animated"
+              viewBox="0 0 600 650"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <radialGradient id="greenGlow" cx="50%" cy="40%" r="50%">
+                  <stop offset="0%" stopColor="#d1fae5" stopOpacity="0.8" />
+                  <stop offset="60%" stopColor="#a7f3d0" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#34d399" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id="greenTrunk" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#1f2937" />
+                  <stop offset="60%" stopColor="#374151" />
+                  <stop offset="100%" stopColor="#4b5563" />
+                </linearGradient>
+              </defs>
+
+              {/* Hào quang thiên nhiên mát lành */}
+              <circle cx="300" cy="270" r="230" fill="url(#greenGlow)" />
+
+              <g className="tree-sway-group">
+                {/* Thân cây vững chãi vươn cao */}
+                <g className="tree-root-trunk">
+                  <path
+                    d="M255,620 C265,540 275,460 282,410 C290,360 275,320 265,280 C285,310 305,330 315,370 C325,430 335,530 345,620 Z"
+                    fill="url(#greenTrunk)"
+                  />
+                  <path d="M235,620 Q270,610 300,618 Q335,610 365,620 Z" fill="#1f2937" />
+                </g>
+
+                {/* Nhánh cây xanh */}
+                <g className="tree-branches-mesh">
+                  <path d="M285,390 Q235,350 175,340 Q225,360 285,405 Z" fill="#374151" />
+                  <path d="M310,380 Q365,340 425,330 Q375,355 315,395 Z" fill="#374151" />
+                  <path d="M275,320 Q225,270 165,260 Q215,280 280,330 Z" fill="#4b5563" />
+                  <path d="M305,310 Q355,260 415,250 Q365,275 300,320 Z" fill="#4b5563" />
+                  <path d="M290,280 Q295,220 300,180 Q305,220 290,280 Z" fill="#4b5563" />
+                </g>
+
+                {/* Tán cây xanh đại thụ tươi tốt mướt mắt */}
+                <g className="tree-canopy-blossom">
+                  <circle cx="300" cy="210" r="85" fill="#059669" opacity="0.95" />
+                  <circle cx="210" cy="270" r="75" fill="#047857" opacity="0.92" />
+                  <circle cx="390" cy="260" r="80" fill="#059669" opacity="0.9" />
+                  <circle cx="160" cy="330" r="60" fill="#10b981" opacity="0.95" />
+                  <circle cx="440" cy="320" r="65" fill="#059669" opacity="0.92" />
+
+                  {/* Tầng lá xanh tươi mơn mởn */}
+                  <circle cx="260" cy="180" r="65" fill="#10b981" />
+                  <circle cx="340" cy="175" r="70" fill="#34d399" />
+                  <circle cx="300" cy="140" r="60" fill="#059669" />
+                  <circle cx="230" cy="230" r="65" fill="#047857" opacity="0.85" />
+                  <circle cx="370" cy="220" r="65" fill="#10b981" />
+                  <circle cx="300" cy="260" r="70" fill="#34d399" />
+
+                  {/* Tán chồi non xanh tươi */}
+                  <circle cx="190" cy="300" r="45" fill="#6ee7b7" />
+                  <circle cx="410" cy="290" r="48" fill="#6ee7b7" />
+                  <circle cx="270" cy="240" r="50" fill="#a7f3d0" />
+                  <circle cx="330" cy="235" r="52" fill="#34d399" />
+
+                  {/* Lá xanh mầm non biểu tượng */}
+                  <text x="285" y="150" fontSize="22">🍃</text>
+                  <text x="210" y="240" fontSize="24">🌿</text>
+                  <text x="360" y="220" fontSize="22">🍃</text>
+                  <text x="170" y="310" fontSize="20">🌱</text>
+                  <text x="400" y="300" fontSize="20">🌿</text>
+                  <text x="300" y="280" fontSize="24">🍃</text>
+                </g>
+              </g>
+            </svg>
+          </div>
         </>
       )}
 
