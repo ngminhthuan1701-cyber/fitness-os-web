@@ -620,6 +620,61 @@ function App() {
   const [toast, setToast] = useState('');
   const fileInputRef = useRef(null);
 
+  // ---------------- PWA & CÀI ĐẶT APP ĐIỆN THOẠI ----------------
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isInstalled, setIsInstalled] = useState(false);
+  const [showPwaInstallModal, setShowPwaInstallModal] = useState(false);
+
+  useEffect(() => {
+    // Đăng ký Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.warn('PWA Service Worker warning:', err);
+      });
+    }
+
+    // Kiểm tra xem đã cài đặt (Standalone Mode) hay chưa
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone) {
+      setIsInstalled(true);
+    }
+
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', () => {
+      setIsInstalled(true);
+      setDeferredPrompt(null);
+      notify('🎉 Fitness OS đã được cài đặt thành công vào máy của bạn!');
+    });
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+    };
+  }, []);
+
+  const handleInstallApp = async () => {
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIos) {
+      setShowPwaInstallModal(true);
+      return;
+    }
+
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setIsInstalled(true);
+      }
+      setDeferredPrompt(null);
+    } else {
+      setShowPwaInstallModal(true);
+    }
+  };
+
   useEffect(() => {
     localStorage.setItem('fitness-os', JSON.stringify(data));
   }, [data]);
@@ -1002,6 +1057,27 @@ function App() {
               </button>
             ))}
           </div>
+          {!isInstalled && (
+            <button
+              onClick={handleInstallApp}
+              style={{
+                background: 'var(--primary-light)',
+                color: 'var(--primary)',
+                border: '1px solid var(--primary-border)',
+                fontWeight: 800,
+                borderRadius: 12,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '10px 14px',
+                cursor: 'pointer'
+              }}
+              title="Cài đặt Fitness OS thành App điện thoại / máy tính"
+            >
+              <I.Smartphone size={18} />
+              <span>Cài App Điện Thoại</span>
+            </button>
+          )}
           <button onClick={toggleTheme}>
             <I.SunMoon size={18} />
             {dark ? 'Giao diện Sáng' : 'Giao diện Tối'}
@@ -1075,6 +1151,29 @@ function App() {
                 </button>
               ))}
             </div>
+            {!isInstalled && (
+              <button
+                onClick={handleInstallApp}
+                title="Cài đặt Fitness OS thành App điện thoại / máy tính"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '7px 14px',
+                  borderRadius: 12,
+                  background: 'var(--primary-gradient)',
+                  color: '#fff',
+                  fontSize: 12.5,
+                  fontWeight: 800,
+                  border: 0,
+                  boxShadow: '0 3px 10px var(--primary-glow)',
+                  cursor: 'pointer'
+                }}
+              >
+                <I.Smartphone size={15} />
+                <span>Cài App</span>
+              </button>
+            )}
             <button className="icon-btn" onClick={handleCloudSync} title="Lưu nhanh lên Supabase Cloud (Đám mây)">
               <I.CloudUpload size={18} />
             </button>
@@ -1214,6 +1313,89 @@ function App() {
           />
         )}
       </main>
+
+      {/* MODAL HƯỚNG DẪN CÀI ĐẶT APP CHO ĐIỆN THOẠI (PWA) */}
+      {showPwaInstallModal && (
+        <div className="modal-backdrop" onClick={() => setShowPwaInstallModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520, borderRadius: 24 }}>
+            <div className="modal-head">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 14,
+                  background: 'var(--primary-gradient)',
+                  color: '#fff',
+                  display: 'grid',
+                  placeItems: 'center',
+                  fontSize: 22,
+                  fontWeight: 900
+                }}>
+                  ⚡
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 18 }}>Cài Đặt App Vào Điện Thoại</h3>
+                  <small style={{ color: 'var(--text-muted)' }}>Dùng toàn màn hình, không thanh URL, chạy mượt mà</small>
+                </div>
+              </div>
+              <button className="icon-btn" onClick={() => setShowPwaInstallModal(false)}>
+                <I.X size={18} />
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gap: 14, marginTop: 16 }}>
+              {/* Hướng dẫn iOS */}
+              <div style={{ background: 'var(--bg-subtle)', padding: 18, borderRadius: 18, border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 800, marginBottom: 10, color: 'var(--text-main)', fontSize: 14 }}>
+                  <I.Smartphone size={18} color="var(--primary)" /> Dành Cho iPhone / iPad (Safari):
+                </div>
+                <div style={{ display: 'grid', gap: 10, fontSize: 13.5, color: 'var(--text-main)', lineHeight: 1.5 }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <span style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--primary-light)', color: 'var(--primary)', display: 'grid', placeItems: 'center', fontWeight: 900, fontSize: 12, flexShrink: 0 }}>1</span>
+                    <span>Nhấn biểu tượng <b>Chia sẻ</b> (hình vuông có mũi tên lên) ở thanh menu đáy của Safari.</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <span style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--primary-light)', color: 'var(--primary)', display: 'grid', placeItems: 'center', fontWeight: 900, fontSize: 12, flexShrink: 0 }}>2</span>
+                    <span>Cuộn xuống chọn <b>"Thêm vào Màn hình chính" (Add to Home Screen)</b>.</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <span style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--primary-light)', color: 'var(--primary)', display: 'grid', placeItems: 'center', fontWeight: 900, fontSize: 12, flexShrink: 0 }}>3</span>
+                    <span>Nhấn <b>"Thêm" (Add)</b> ở góc trên bên phải. Xong!</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hướng dẫn Android / Chrome */}
+              <div style={{ background: 'var(--bg-subtle)', padding: 18, borderRadius: 18, border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 800, marginBottom: 8, color: 'var(--text-main)', fontSize: 14 }}>
+                  <I.Compass size={18} color="var(--primary)" /> Dành Cho Android (Chrome) / Máy Tính:
+                </div>
+                <div style={{ fontSize: 13.5, color: 'var(--text-main)', lineHeight: 1.5 }}>
+                  Nhấn menu ba chấm <b>(⋮)</b> ở góc trên trình duyệt ➔ Chọn <b>"Cài đặt ứng dụng"</b> hoặc <b>"Thêm vào Màn hình chính"</b>.
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-foot" style={{ marginTop: 18 }}>
+              {deferredPrompt && (
+                <button
+                  className="primary"
+                  onClick={() => {
+                    handleInstallApp();
+                    setShowPwaInstallModal(false);
+                  }}
+                  style={{ width: '100%', padding: '12px 18px', fontWeight: 800 }}
+                >
+                  <I.Download size={16} /> Cài Đặt Ngay
+                </button>
+              )}
+              <button className="secondary" onClick={() => setShowPwaInstallModal(false)} style={{ width: deferredPrompt ? 'auto' : '100%' }}>
+                Đã hiểu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {toast && (
         <div className="toast">

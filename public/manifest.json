@@ -1,18 +1,49 @@
 {
-  "name": "AI Fitness OS - Quản Lý Thể Hình & Dinh Dưỡng",
+  "name": "Fitness OS - Quản Lý Thể Hình & Dinh Dưỡng",
   "short_name": "Fitness OS",
-  "description": "Hệ thống quản lý lịch tập, dinh dưỡng, calo và video nấu ăn cá nhân",
+  "id": "/",
+  "description": "Hệ điều hành thể hình thông minh: Lịch tập gym, mô hình 3D giải phẫu cơ bắp, dinh dưỡng, calo và AI Coach cá nhân.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#f0f6fc",
+  "background_color": "#0f172a",
   "theme_color": "#0284c7",
   "orientation": "portrait",
+  "categories": ["health", "fitness", "lifestyle"],
   "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Lịch tập hôm nay",
+      "short_name": "Lịch tập",
+      "description": "Mở nhanh nhật ký tập luyện hôm nay",
+      "url": "/",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mô hình Cơ 3D",
+      "short_name": "Cơ 3D",
+      "description": "Khám phá giải phẫu 3D và bài tập",
+      "url": "/",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
