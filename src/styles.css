@@ -96,6 +96,150 @@
   --primary-glow: rgba(52, 211, 153, 0.25);
 }
 
+/* ---------------- THEME HOA ANH ĐÀO (SAKURA PINK PASTEL) ---------------- */
+.app.theme-pink {
+  --primary: #f43f5e;          /* Sakura Rose 500 */
+  --primary-hover: #e11d48;    /* Rose 600 */
+  --primary-light: #ffe4e6;    /* Pastel Rose 100 */
+  --primary-border: #fecdd3;   /* Pastel Rose 200 */
+  --primary-glow: rgba(244, 63, 94, 0.22);
+  
+  --bg-page: #fff5f7;         /* Hồng anh đào pastel rất mềm dịu mắt */
+  --bg-card: #ffffff;
+  --bg-subtle: #fff1f3;
+  --text-main: #4c0519;       /* Đỏ mận sẫm cực kỳ rõ ràng, nét căng */
+  --text-muted: #881337;
+  --text-dim: #9f1239;
+  --border-card: #fecdd3;
+  --border-subtle: #ffe4e6;
+  --shadow-sm: 0 1px 3px rgba(136, 19, 55, 0.06);
+  --shadow-md: 0 4px 20px -2px rgba(136, 19, 55, 0.08), 0 2px 6px -1px rgba(136, 19, 55, 0.04);
+}
+
+.app.theme-pink .sidebar {
+  background: #2b0b14;
+  border-right-color: #4c1122;
+}
+.app.theme-pink .logo {
+  background: linear-gradient(135deg, #fb7185, #f43f5e);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.4);
+}
+.app.theme-pink .brand span {
+  color: #fbcfe8;
+}
+.app.theme-pink .sidebar button:hover {
+  background: #441422;
+  color: #fbcfe8;
+}
+.app.theme-pink .sidebar button.active {
+  background: linear-gradient(135deg, rgba(225, 29, 72, 0.35), rgba(251, 113, 133, 0.2));
+  color: #fda4af;
+  border-color: rgba(251, 113, 133, 0.45);
+}
+.app.theme-pink .primary {
+  background: linear-gradient(135deg, #e11d48, #f43f5e);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+}
+.app.theme-pink .primary:hover {
+  background: linear-gradient(135deg, #be123c, #e11d48);
+}
+.app.theme-pink .sub-nav-tab.active {
+  background: linear-gradient(135deg, #e11d48, #f43f5e);
+  border-color: #e11d48;
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+}
+.app.theme-pink .avatar {
+  background: linear-gradient(135deg, #e11d48, #fb7185);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+}
+
+/* Pink Dark Theme */
+.app.theme-pink.dark {
+  --bg-page: #17050a;
+  --bg-card: #230811;
+  --bg-subtle: #2f0c18;
+  --text-main: #fff1f2;
+  --text-muted: #fda4af;
+  --text-dim: #f43f5e;
+  --border-card: #4c0519;
+  --border-subtle: #3a0815;
+  --primary-light: #380e1b;
+  --primary-border: #641128;
+  --primary-glow: rgba(251, 113, 133, 0.25);
+}
+
+/* ---------------- THEME MÙA THU ẤM ÁP (AUTUMN AMBER) ---------------- */
+.app.theme-autumn {
+  --primary: #d97706;          /* Autumn Amber 600 */
+  --primary-hover: #b45309;    /* Amber 700 */
+  --primary-light: #fef3c7;    /* Pastel Amber 100 */
+  --primary-border: #fde68a;   /* Pastel Amber 200 */
+  --primary-glow: rgba(217, 119, 6, 0.22);
+  
+  --bg-page: #fffdf5;         /* Nền mật ong mùa thu ấm áp cực êm mắt */
+  --bg-card: #ffffff;
+  --bg-subtle: #fefcf3;
+  --text-main: #451a03;       /* Nâu hổ phách đậm rất nét, không bị chói */
+  --text-muted: #78350f;
+  --text-dim: #92400e;
+  --border-card: #fde68a;
+  --border-subtle: #fef3c7;
+  --shadow-sm: 0 1px 3px rgba(120, 53, 15, 0.06);
+  --shadow-md: 0 4px 20px -2px rgba(120, 53, 15, 0.08), 0 2px 6px -1px rgba(120, 53, 15, 0.04);
+}
+
+.app.theme-autumn .sidebar {
+  background: #241407;
+  border-right-color: #3d230e;
+}
+.app.theme-autumn .logo {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);
+}
+.app.theme-autumn .brand span {
+  color: #fde68a;
+}
+.app.theme-autumn .sidebar button:hover {
+  background: #3b220e;
+  color: #fde68a;
+}
+.app.theme-autumn .sidebar button.active {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.35), rgba(245, 158, 11, 0.2));
+  color: #fde68a;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+.app.theme-autumn .primary {
+  background: linear-gradient(135deg, #b45309, #d97706);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+}
+.app.theme-autumn .primary:hover {
+  background: linear-gradient(135deg, #92400e, #b45309);
+}
+.app.theme-autumn .sub-nav-tab.active {
+  background: linear-gradient(135deg, #b45309, #d97706);
+  border-color: #b45309;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+}
+.app.theme-autumn .avatar {
+  background: linear-gradient(135deg, #b45309, #f59e0b);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+}
+
+/* Autumn Dark Theme */
+.app.theme-autumn.dark {
+  --bg-page: #140b04;
+  --bg-card: #1f1207;
+  --bg-subtle: #2b190a;
+  --text-main: #fef3c7;
+  --text-muted: #fde68a;
+  --text-dim: #d97706;
+  --border-card: #451a03;
+  --border-subtle: #331402;
+  --primary-light: #2e1608;
+  --primary-border: #522509;
+  --primary-glow: rgba(245, 158, 11, 0.25);
+}
+
 .dark {
   /* Dark Midnight Blue Theme */
   --bg-page: #0a0f1d;
@@ -1625,11 +1769,11 @@ button {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* ---------------- FULL-SIZED SCREEN MODALS ---------------- */
+/* ---------------- FULL-SIZED & STANDARD SCREEN MODALS ---------------- */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(15, 23, 42, 0.72);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -1638,21 +1782,47 @@ button {
   padding: 24px;
 }
 
-/* To lớn gần như full màn hình theo đúng mong muốn của người dùng */
+/* Modal tiêu chuẩn (Thêm bữa ăn, Thêm bài tập...) - Nền đục 100% không bị trong suốt */
+.modal {
+  background: var(--bg-card) !important;
+  background-color: #ffffff !important;
+  border-radius: 24px;
+  width: 92vw;
+  max-width: 580px;
+  max-height: 90vh;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--border-card);
+  border: 1px solid var(--border-card);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 32px;
+  position: relative;
+  overflow: hidden;
+  z-index: 101;
+}
+
+.dark .modal {
+  background-color: #111a2e !important;
+}
+
+.app.theme-green.dark .modal {
+  background-color: #0b221a !important;
+}
+
+.app.theme-pink.dark .modal {
+  background-color: #230811 !important;
+}
+
+.app.theme-autumn.dark .modal {
+  background-color: #1f1207 !important;
+}
+
+/* To lớn gần như full màn hình cho chi tiết món ăn / video */
 .modal-fullscreen, .modal.modal-xl {
-  background: var(--bg-card);
-  border-radius: 26px;
   width: 95vw !important;
   max-width: 1400px !important;
   height: 92vh !important;
   max-height: 92vh !important;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border-card);
-  display: flex;
-  flex-direction: column;
   padding: 32px 40px !important;
-  position: relative;
-  overflow: hidden;
 }
 
 .modal-head {
@@ -1666,7 +1836,7 @@ button {
 
 .modal-head h3 {
   margin: 0;
-  font-size: 23px;
+  font-size: 22px;
   font-weight: 900;
   color: var(--text-main);
   letter-spacing: -0.4px;
@@ -1682,10 +1852,12 @@ button {
   display: grid;
   place-items: center;
   font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .modal-close:hover {
-  color: var(--text-main);
+  color: #ef4444;
   background: #fee2e2;
   border-color: #fecaca;
 }
@@ -1720,9 +1892,9 @@ button {
 }
 
 .input-row label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
-  color: var(--text-muted);
+  color: var(--text-main) !important; /* CHỮ ĐẬM RÕ NÉT 100%, KHÔNG BỊ MỜ */
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
@@ -1731,12 +1903,14 @@ button {
   width: 100%;
   padding: 13px 16px;
   border-radius: 12px;
-  border: 1px solid var(--border-card);
+  border: 1.5px solid var(--border-card);
   background: var(--bg-subtle);
   color: var(--text-main);
+  font-weight: 700;
   font: inherit;
   font-size: 14.5px;
   outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-row input:focus, .input-row select:focus, .input-row textarea:focus {

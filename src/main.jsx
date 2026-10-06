@@ -238,7 +238,14 @@ function App() {
     }
   });
 
-  // Theme màu chủ đạo: 'green' (Xanh lá mát mẻ) hoặc 'blue' (Xanh biển)
+  // 4 Theme màu sắc: 'green' (Xanh lá), 'pink' (Hoa anh đào), 'autumn' (Mùa thu), 'blue' (Xanh biển)
+  const themesList = [
+    { key: 'green', name: 'Xanh lá mát mẻ', icon: '🌿', subtitle: 'EMERALD MINT SYSTEM' },
+    { key: 'pink', name: 'Hoa anh đào Pastel', icon: '🌸', subtitle: 'SAKURA PINK SYSTEM' },
+    { key: 'autumn', name: 'Mùa thu ấm áp', icon: '🍂', subtitle: 'AUTUMN AMBER SYSTEM' },
+    { key: 'blue', name: 'Xanh biển Pastel', icon: '🌊', subtitle: 'PASTEL BLUE SYSTEM' }
+  ];
+
   const [colorTheme, setColorTheme] = useState(() => {
     try {
       return localStorage.getItem('fitness-color-theme') || 'green'; // Mặc định xanh lá mát mẻ
@@ -275,12 +282,14 @@ function App() {
     localStorage.setItem('fitness-sidebar-collapsed', String(next));
   };
 
-  const toggleColorTheme = () => {
-    const next = colorTheme === 'green' ? 'blue' : 'green';
-    setColorTheme(next);
-    localStorage.setItem('fitness-color-theme', next);
-    notify(`Đã chuyển theme: ${next === 'green' ? '🌿 Xanh lá mát mẻ' : '🌊 Xanh biển Pastel'}`);
+  const handleSelectColorTheme = (themeKey) => {
+    setColorTheme(themeKey);
+    localStorage.setItem('fitness-color-theme', themeKey);
+    const th = themesList.find(t => t.key === themeKey);
+    notify(`Đã chuyển theme: ${th ? th.icon + ' ' + th.name : themeKey}`);
   };
+
+  const currentTheme = themesList.find(t => t.key === colorTheme) || themesList[0];
 
   const consumed = useMemo(() => data.meals.reduce((s, m) => s + (Number(m.cal) || 0), 0), [data.meals]);
   const protein = useMemo(() => data.meals.reduce((s, m) => s + (Number(m.protein) || 0), 0), [data.meals]);
@@ -532,7 +541,7 @@ function App() {
   ];
 
   return (
-    <div className={`app ${colorTheme === 'green' ? 'theme-green' : ''} ${dark ? 'dark' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`.trim()}>
+    <div className={`app ${colorTheme === 'green' ? 'theme-green' : colorTheme === 'pink' ? 'theme-pink' : colorTheme === 'autumn' ? 'theme-autumn' : ''} ${dark ? 'dark' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`.trim()}>
       <input
         type="file"
         ref={fileInputRef}
@@ -546,7 +555,7 @@ function App() {
           <div className="logo">⚡</div>
           <div>
             <b>FITNESS OS</b>
-            <span>{colorTheme === 'green' ? 'EMERALD GREEN SYSTEM' : 'PASTEL BLUE SYSTEM'}</span>
+            <span>{currentTheme.subtitle}</span>
           </div>
           <button
             className="sidebar-toggle-btn"
@@ -571,10 +580,29 @@ function App() {
         </nav>
 
         <div className="sidebar-bottom">
-          <button onClick={toggleColorTheme}>
-            <span style={{ fontSize: 16 }}>{colorTheme === 'green' ? '🌿' : '🌊'}</span>
-            {colorTheme === 'green' ? 'Giao diện: Xanh lá mát mẻ' : 'Giao diện: Xanh biển Pastel'}
-          </button>
+          {/* Bộ chọn 4 Theme trong Sidebar */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, marginBottom: 4 }}>
+            {themesList.map(th => (
+              <button
+                key={th.key}
+                onClick={() => handleSelectColorTheme(th.key)}
+                title={th.name}
+                style={{
+                  padding: '9px 0',
+                  borderRadius: 10,
+                  background: colorTheme === th.key ? 'rgba(255, 255, 255, 0.22)' : 'rgba(255, 255, 255, 0.06)',
+                  border: colorTheme === th.key ? '1px solid rgba(255, 255, 255, 0.45)' : '1px solid transparent',
+                  fontSize: 17,
+                  textAlign: 'center',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                {th.icon}
+              </button>
+            ))}
+          </div>
           <button onClick={toggleTheme}>
             <I.SunMoon size={18} />
             {dark ? 'Giao diện Sáng' : 'Giao diện Tối'}
@@ -614,14 +642,39 @@ function App() {
             </div>
           </div>
           <div className="header-actions">
-            {/* Nút Đổi Theme Xanh Lá / Xanh Biển */}
-            <button
-              className="icon-btn"
-              onClick={toggleColorTheme}
-              title={colorTheme === 'green' ? 'Đang dùng: 🌿 Xanh lá mát mẻ (Bấm để đổi sang Xanh biển 🌊)' : 'Đang dùng: 🌊 Xanh biển (Bấm để đổi sang Xanh lá 🌿)'}
-            >
-              <span style={{ fontSize: 17 }}>{colorTheme === 'green' ? '🌿' : '🌊'}</span>
-            </button>
+            {/* Bộ chọn 4 Theme trực tiếp: Xanh lá, Hoa anh đào, Mùa thu, Xanh biển */}
+            <div style={{
+              display: 'flex',
+              gap: 4,
+              background: 'var(--bg-card)',
+              padding: '3px 6px',
+              borderRadius: 14,
+              border: '1px solid var(--border-card)',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
+              {themesList.map(th => (
+                <button
+                  key={th.key}
+                  onClick={() => handleSelectColorTheme(th.key)}
+                  title={`Đổi sang: ${th.name}`}
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: 10,
+                    border: colorTheme === th.key ? '2px solid var(--primary)' : '1px solid transparent',
+                    background: colorTheme === th.key ? 'var(--primary-light)' : 'transparent',
+                    fontSize: 16,
+                    display: 'grid',
+                    placeItems: 'center',
+                    cursor: 'pointer',
+                    transform: colorTheme === th.key ? 'scale(1.06)' : 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  {th.icon}
+                </button>
+              ))}
+            </div>
             <button className="icon-btn" onClick={handleCloudSync} title="Lưu nhanh lên Supabase Cloud (Đám mây)">
               <I.CloudUpload size={18} />
             </button>
