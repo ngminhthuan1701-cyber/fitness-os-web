@@ -269,23 +269,43 @@ function ThemeAnimationOverlay({ effect, onDismiss }) {
       )}
 
       {effect === 'blue' && (
-        <div className="ocean-wave-overlay">
-          <svg
-            viewBox="0 0 1440 280"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ width: '100%', height: 'auto', display: 'block' }}
-          >
-            <path
-              fill="rgba(56, 189, 248, 0.45)"
-              d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,160C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            />
-            <path
-              fill="rgba(2, 132, 199, 0.58)"
-              d="M0,160L48,170.7C96,181,192,203,288,197.3C384,192,480,160,576,149.3C672,139,768,149,864,165.3C960,181,1056,203,1152,197.3C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            />
-          </svg>
-        </div>
+        <>
+          {Array.from({ length: 28 }).map((_, i) => {
+            const icons = ['🫧', '🌊', '💧', '🫧', '🌊'];
+            const bubble = icons[i % icons.length];
+            return (
+              <div
+                key={i}
+                className="ocean-bubble-item"
+                style={{
+                  left: `${((i * 3.6) + (i % 4) * 1.8) % 96}%`,
+                  fontSize: `${18 + (i % 4) * 6}px`,
+                  animationDelay: `${(i * 0.12).toFixed(2)}s`,
+                  animationDuration: `${(2.8 + (i % 4) * 0.35).toFixed(2)}s`
+                }}
+              >
+                {bubble}
+              </div>
+            );
+          })}
+          <div className="ocean-wave-overlay">
+            <svg
+              viewBox="0 0 1440 280"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+            >
+              <path
+                fill="rgba(56, 189, 248, 0.45)"
+                d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,160C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+              />
+              <path
+                fill="rgba(2, 132, 199, 0.58)"
+                d="M0,160L48,170.7C96,181,192,203,288,197.3C384,192,480,160,576,149.3C672,139,768,149,864,165.3C960,181,1056,203,1152,197.3C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+              />
+            </svg>
+          </div>
+        </>
       )}
     </div>
   );
@@ -388,7 +408,7 @@ function App() {
   const handleSelectColorTheme = (themeKey) => {
     setColorTheme(themeKey);
     localStorage.setItem('fitness-color-theme', themeKey);
-    setActiveThemeEffect(themeKey);
+    setActiveThemeEffect({ type: themeKey, id: Date.now() });
     const th = themesList.find(t => t.key === themeKey);
     notify(`Đã chuyển theme: ${th ? th.icon + ' ' + th.name : themeKey}`);
   };
@@ -646,7 +666,11 @@ function App() {
 
   return (
     <div className={`app ${colorTheme === 'green' ? 'theme-green' : colorTheme === 'pink' ? 'theme-pink' : colorTheme === 'autumn' ? 'theme-autumn' : ''} ${dark ? 'dark' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`.trim()}>
-      <ThemeAnimationOverlay effect={activeThemeEffect} onDismiss={() => setActiveThemeEffect(null)} />
+      <ThemeAnimationOverlay
+        key={activeThemeEffect ? activeThemeEffect.id : 'none'}
+        effect={activeThemeEffect ? activeThemeEffect.type : null}
+        onDismiss={() => setActiveThemeEffect(null)}
+      />
 
       <input
         type="file"

@@ -44,15 +44,15 @@
   --bg-page: #f6fbf7;         /* Nền xanh lá pastel rất nhạt, êm dịu mắt */
   --bg-card: #ffffff;
   --bg-subtle: #edf7f0;
-  --text-main: #064e3b;       /* Xanh rêu đậm, nét rõ, êm dịu */
-  --text-muted: #374151;
-  --text-dim: #9ca3af;
+  --text-main: #0f172a;       /* Chữ đen chuẩn rõ nét giống tông xanh biển */
+  --text-muted: #64748b;      /* Xám chữ phụ */
+  --text-dim: #94a3b8;
   --border-card: #d1fae5;
   --border-subtle: #e6f7ee;
   
   --sidebar-bg: #f4fbf6;      /* Thanh menu sáng pastel dịu mát, không bị đen đậm */
   --sidebar-border: #d1fae5;
-  --sidebar-text: #1f2937;
+  --sidebar-text: #1e293b;     /* Chữ menu đen đậm nét */
   --sidebar-hover-bg: #e5f7eb;
 }
 
@@ -85,14 +85,14 @@
   --bg-page: #061711;
   --bg-card: #0b221a;
   --bg-subtle: #0f2c22;
-  --text-main: #f0fdf4;
-  --text-muted: #9ca3af;
-  --text-dim: #6b7280;
+  --text-main: #f8fafc;       /* Trắng sáng rõ nét */
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
   --border-card: #153b2d;
   --border-subtle: #1c4838;
   --sidebar-bg: #071f16;
   --sidebar-border: #0f3d2b;
-  --sidebar-text: #e5e7eb;
+  --sidebar-text: #f1f5f9;
   --primary-light: #103829;
   --primary-border: #165b40;
   --primary-glow: rgba(52, 211, 153, 0.25);
@@ -107,18 +107,18 @@
   --primary-border: #fecdd3;   /* Pastel Rose 200 */
   --primary-glow: rgba(244, 63, 94, 0.22);
   
-  --bg-page: #fdf6f7;         /* Nền hồng phấn hoa anh đào cực kỳ nhạt, thanh tao */
+  --bg-page: #fdf6f7;         /* Nền hồng phấn hoa anh đào cực kỳ nhạt */
   --bg-card: #ffffff;
   --bg-subtle: #faedf0;
-  --text-main: #4c0519;       /* Đỏ mận sẫm cực kỳ rõ ràng, nét căng */
-  --text-muted: #881337;
-  --text-dim: #9f1239;
+  --text-main: #0f172a;       /* Chữ đen chuẩn rõ nét giống tông xanh biển */
+  --text-muted: #64748b;      /* Xám chữ phụ */
+  --text-dim: #94a3b8;
   --border-card: #fecdd3;
   --border-subtle: #ffe4e6;
   
   --sidebar-bg: #fdf3f5;      /* Thanh menu hồng pastel sáng mềm, không bị đen đậm */
   --sidebar-border: #fecdd3;
-  --sidebar-text: #374151;
+  --sidebar-text: #1e293b;     /* Chữ menu đen đậm nét */
   --sidebar-hover-bg: #fbe6eb;
 }
 
@@ -151,14 +151,14 @@
   --bg-page: #17050a;
   --bg-card: #230811;
   --bg-subtle: #2f0c18;
-  --text-main: #fff1f2;
-  --text-muted: #fda4af;
-  --text-dim: #f43f5e;
+  --text-main: #f8fafc;       /* Trắng sáng rõ nét */
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
   --border-card: #4c0519;
   --border-subtle: #3a0815;
   --sidebar-bg: #200810;
   --sidebar-border: #3d0f1e;
-  --sidebar-text: #fecdd3;
+  --sidebar-text: #f1f5f9;
   --primary-light: #380e1b;
   --primary-border: #641128;
   --primary-glow: rgba(251, 113, 133, 0.25);
@@ -176,15 +176,15 @@
   --bg-page: #fdfbf7;         /* Nền mật ong mùa thu cực nhạt, ấm áp dịu mắt */
   --bg-card: #ffffff;
   --bg-subtle: #f9f5ec;
-  --text-main: #451a03;       /* Nâu hổ phách đậm rất nét, không bị chói */
-  --text-muted: #78350f;
-  --text-dim: #92400e;
+  --text-main: #0f172a;       /* Chữ đen chuẩn rõ nét giống tông xanh biển */
+  --text-muted: #64748b;      /* Xám chữ phụ */
+  --text-dim: #94a3b8;
   --border-card: #fde68a;
   --border-subtle: #fef3c7;
   
   --sidebar-bg: #fbf6ec;      /* Thanh menu ấm áp sáng pastel, không bị đen đậm */
   --sidebar-border: #fde68a;
-  --sidebar-text: #374151;
+  --sidebar-text: #1e293b;     /* Chữ menu đen đậm nét */
   --sidebar-hover-bg: #f6ecdb;
 }
 
@@ -217,14 +217,14 @@
   --bg-page: #140b04;
   --bg-card: #1f1207;
   --bg-subtle: #2b190a;
-  --text-main: #fef3c7;
-  --text-muted: #fde68a;
-  --text-dim: #d97706;
+  --text-main: #f8fafc;       /* Trắng sáng rõ nét */
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
   --border-card: #451a03;
   --border-subtle: #331402;
   --sidebar-bg: #1e0e04;
   --sidebar-border: #3b1b07;
-  --sidebar-text: #fef3c7;
+  --sidebar-text: #f1f5f9;
   --primary-light: #2e1608;
   --primary-border: #522509;
   --primary-glow: rgba(245, 158, 11, 0.25);
@@ -483,14 +483,38 @@ button {
   }
 }
 
-/* 4. Sóng biển dạt dào */
+/* 4. Sóng biển dạt dào & Bong bóng đại dương */
+.ocean-bubble-item {
+  position: absolute;
+  bottom: -40px;
+  animation: bubbleRise ease-out forwards;
+}
+
+@keyframes bubbleRise {
+  0% {
+    transform: translateY(0) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-105vh) scale(1.25);
+    opacity: 0;
+  }
+}
+
 .ocean-wave-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   pointer-events: none;
-  animation: oceanSurge 3.8s ease-in-out forwards;
+  animation: oceanSurge 4s ease-in-out forwards;
+  z-index: 10;
 }
 
 @keyframes oceanSurge {
@@ -498,13 +522,13 @@ button {
     transform: translateY(100%);
     opacity: 0;
   }
-  25% {
-    transform: translateY(20px);
-    opacity: 0.85;
+  20% {
+    transform: translateY(0%);
+    opacity: 0.9;
   }
   65% {
-    transform: translateY(0);
-    opacity: 0.85;
+    transform: translateY(15%);
+    opacity: 0.9;
   }
   100% {
     transform: translateY(100%);
