@@ -1,0 +1,18 @@
+{
+  "name": "AI Fitness OS - Quản Lý Thể Hình & Dinh Dưỡng",
+  "short_name": "Fitness OS",
+  "description": "Hệ thống quản lý lịch tập, dinh dưỡng, calo và video nấu ăn cá nhân",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f6fc",
+  "theme_color": "#0284c7",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
