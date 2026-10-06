@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import * as I from 'lucide-react';
 import './styles.css';
 import { askGeminiCoach } from './gemini.js';
-import { defaultRecipes } from './recipesData.js';
+import { defaultRecipes, defaultCombos, standardIngredients } from './recipesData.js';
 import { workoutPrograms, muscleGroups } from './workoutData.js';
 import { SUPABASE_URL, DEFAULT_SUPABASE_KEY, saveToSupabase, loadFromSupabase, testConnection } from './supabase.js';
 
@@ -123,6 +123,33 @@ const seed = {
     { name: 'Snack', food: 'Sữa chua + chuối + đậu phộng rang', cal: 360, protein: 16, cost: 22000 }
   ],
   recipes: defaultRecipes,
+  myRecipes: [
+    {
+      id: 'my-1',
+      name: 'Ức gà luộc xé phay muối tiêu chanh',
+      category: 'High Protein',
+      mealType: 'Trưa / Tối',
+      time: '12 phút',
+      cal: 330,
+      protein: 50,
+      carbs: 2,
+      fat: 5,
+      cost: 25000,
+      emoji: '🍗',
+      image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80',
+      summary: 'Món tủ của tôi: luộc nhanh, xé phay chấm muối tiêu chanh thơm lừng.',
+      beginnerTip: 'Mẹo cho người mới: Luộc với nhánh gừng nhỏ và chút muối. Khi nước sôi 8 phút thì tắt bếp, ngâm thêm 5 phút là gà chín mềm mọng!',
+      videoUrl: '',
+      ingredients: ['200g ức gà tươi', '1 nhánh gừng', 'Muối, tiêu, chanh tươi'],
+      steps: [
+        'Đun sôi nồi nước với vài lát gừng và 1 thìa muối.',
+        'Cho ức gà vào luộc 8 phút ở lửa vừa.',
+        'Tắt bếp, đậy vung ngâm 5 phút rồi vớt ra ngâm nước lạnh.',
+        'Xé phay miếng vừa ăn và chấm muối tiêu chanh.'
+      ]
+    }
+  ],
+  combos: defaultCombos,
   history: initialHistory,
   expenses: [
     { item: 'Ức gà tươi (500g)', amount: 45000, cat: 'Thịt' },
@@ -347,6 +374,71 @@ function App() {
     notify(`Đã thêm công thức "${recipe.name}"`);
   };
 
+  const handleSaveToMyRecipes = (recipe) => {
+    const newMyRecipe = {
+      ...recipe,
+      id: 'my-' + Date.now(),
+      savedFromSuggested: true
+    };
+    setData(d => ({
+      ...d,
+      myRecipes: [newMyRecipe, ...(d.myRecipes || [])]
+    }));
+    notify(`⭐ Đã lưu "${recipe.name}" vào Thực đơn của tôi!`);
+  };
+
+  const handleCreateMyRecipe = (recipe) => {
+    setData(d => ({
+      ...d,
+      myRecipes: [recipe, ...(d.myRecipes || [])]
+    }));
+    notify(`✅ Đã thêm "${recipe.name}" vào Thực đơn của tôi!`);
+  };
+
+  const handleDeleteMyRecipe = (recipeId) => {
+    setData(d => ({
+      ...d,
+      myRecipes: (d.myRecipes || []).filter(r => r.id !== recipeId)
+    }));
+    notify('Đã xóa món khỏi Thực đơn của tôi');
+  };
+
+  const handleEatCombo = (combo, mealType = 'Trưa') => {
+    const mealName = mealType || 'Trưa';
+    const itemsText = Array.isArray(combo.items) ? combo.items.join(' + ') : (combo.items || combo.name);
+    const newMeal = {
+      name: mealName,
+      food: `[Combo] ${combo.name}: ${itemsText}`,
+      cal: Number(combo.cal),
+      protein: Number(combo.protein),
+      cost: Number(combo.cost || 0)
+    };
+    setData(d => ({
+      ...d,
+      meals: [...d.meals, newMeal],
+      expenses: combo.cost > 0
+        ? [...d.expenses, { item: `Combo: ${combo.name}`, amount: Number(combo.cost), cat: 'Thực phẩm' }]
+        : d.expenses
+    }));
+    notify(`⚡ Đã nạp "${combo.name}" (${combo.cal} kcal, ${combo.protein}g đạm) vào bữa ${mealName}!`);
+  };
+
+  const handleCreateCombo = (combo) => {
+    setData(d => ({
+      ...d,
+      combos: [combo, ...(d.combos || [])]
+    }));
+    notify(`🍱 Đã lưu Combo "${combo.name}" thành công!`);
+  };
+
+  const handleDeleteCombo = (comboId) => {
+    setData(d => ({
+      ...d,
+      combos: (d.combos || []).filter(c => c.id !== comboId)
+    }));
+    notify('Đã xóa Combo');
+  };
+
   const handleAddExpense = (expense) => {
     setData(d => ({
       ...d,
@@ -515,8 +607,17 @@ function App() {
         {page === 'Recipes' && (
           <RecipesPage
             recipes={data.recipes}
+            myRecipes={data.myRecipes || []}
+            combos={data.combos || []}
+            ingredients={standardIngredients}
             onAddMeal={handleAddMeal}
             onAddRecipe={handleAddRecipe}
+            onSaveToMyRecipes={handleSaveToMyRecipes}
+            onCreateMyRecipe={handleCreateMyRecipe}
+            onDeleteMyRecipe={handleDeleteMyRecipe}
+            onEatCombo={handleEatCombo}
+            onCreateCombo={handleCreateCombo}
+            onDeleteCombo={handleDeleteCombo}
             notify={notify}
           />
         )}
@@ -526,8 +627,10 @@ function App() {
             data={data}
             consumed={consumed}
             protein={protein}
+            combos={data.combos || []}
             onAddMeal={handleAddMeal}
             onDeleteMeal={handleDeleteMeal}
+            onEatCombo={handleEatCombo}
             onOpenRecipes={() => setPage('Recipes')}
           />
         )}
@@ -2101,14 +2204,30 @@ function Workout({ data, setData, notify }) {
   );
 }
 
-// ---------------- RECIPES & FULL-SIZED COOKING COMPONENT ----------------
-function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
+// ---------------- RECIPES & COOKING & COMBO COMPONENT ----------------
+function RecipesPage({
+  recipes,
+  myRecipes = [],
+  combos = [],
+  ingredients = standardIngredients,
+  onAddMeal,
+  onAddRecipe,
+  onSaveToMyRecipes,
+  onCreateMyRecipe,
+  onDeleteMyRecipe,
+  onEatCombo,
+  onCreateCombo,
+  onDeleteCombo,
+  notify
+}) {
+  const [tab, setTab] = useState('suggested'); // 'suggested' | 'my_recipes' | 'combos'
   const [filter, setFilter] = useState('Tất cả');
   const [search, setSearch] = useState('');
   const [activeRecipe, setActiveRecipe] = useState(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedMealType, setSelectedMealType] = useState('Trưa');
 
+  // Modal tạo món của tôi
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [newRecipe, setNewRecipe] = useState({
     name: '',
     category: 'High Protein',
@@ -2120,39 +2239,139 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
     fat: 10,
     cost: 35000,
     emoji: '🍲',
+    image: '',
     summary: '',
+    beginnerTip: '',
     videoUrl: '',
     ingredientsText: '',
     stepsText: ''
   });
 
+  // State chọn nguyên liệu để máy tự tính trong Modal Tạo Món
+  const [selectedIngredientsInRecipe, setSelectedIngredientsInRecipe] = useState([]);
+
+  // State Trình tạo Combo Mới
+  const [showComboCreator, setShowComboCreator] = useState(false);
+  const [newCombo, setNewCombo] = useState({
+    name: '',
+    icon: '🍱',
+    goal: 'Tăng cơ nạc (Lean Bulk)',
+    bestTime: 'Trưa',
+    summary: ''
+  });
+  const [comboSelectedIngredients, setComboSelectedIngredients] = useState([
+    { id: 'uc-ga', qty: 2 }, // 200g ức gà
+    { id: 'com-trang', qty: 1 }, // 1 bát cơm
+    { id: 'sup-lo', qty: 1 } // 100g súp lơ
+  ]);
+  const [comboMealType, setComboMealType] = useState('Trưa');
+
   const categories = ['Tất cả', 'High Protein', 'Budget Friendly', 'Mass Gainer'];
 
-  const filteredRecipes = recipes.filter(r => {
+  // Lọc món gợi ý
+  const filteredSuggested = recipes.filter(r => {
     const matchCategory = filter === 'Tất cả' || r.category === filter;
     const matchSearch = r.name.toLowerCase().includes(search.toLowerCase()) ||
-      r.ingredients.some(ing => ing.toLowerCase().includes(search.toLowerCase()));
+      (r.ingredients && r.ingredients.some(ing => ing.toLowerCase().includes(search.toLowerCase())));
     return matchCategory && matchSearch;
   });
 
-  const handleLogMeal = (recipe) => {
+  // Lọc món của tôi
+  const filteredMyRecipes = myRecipes.filter(r => {
+    const matchSearch = r.name.toLowerCase().includes(search.toLowerCase()) ||
+      (r.ingredients && r.ingredients.some(ing => ing.toLowerCase().includes(search.toLowerCase())));
+    return matchSearch;
+  });
+
+  // Nạp món vào nhật ký hôm nay
+  const handleLogMeal = (recipe, mealName = selectedMealType) => {
     onAddMeal({
-      name: selectedMealType,
+      name: mealName,
       food: recipe.name,
       cal: Number(recipe.cal),
       protein: Number(recipe.protein),
-      cost: Number(recipe.cost)
+      cost: Number(recipe.cost || 0)
     });
     setActiveRecipe(null);
   };
 
+  // Tính toán dinh dưỡng tự động cho Trình Tạo Combo
+  const comboTotals = useMemo(() => {
+    let cal = 0;
+    let protein = 0;
+    let carbs = 0;
+    let fat = 0;
+    let cost = 0;
+    const itemsList = [];
+
+    comboSelectedIngredients.forEach(sel => {
+      const ing = ingredients.find(i => i.id === sel.id);
+      if (ing && sel.qty > 0) {
+        cal += Math.round(ing.cal * sel.qty);
+        protein += Math.round(ing.protein * sel.qty);
+        carbs += Math.round(ing.carbs * sel.qty);
+        fat += Math.round(ing.fat * sel.qty);
+        cost += Math.round(ing.cost * sel.qty);
+        itemsList.push(`${ing.name} (x${sel.qty} ${ing.unit})`);
+      }
+    });
+
+    return { cal, protein, carbs, fat, cost, itemsList };
+  }, [comboSelectedIngredients, ingredients]);
+
+  // Cập nhật số lượng nguyên liệu trong combo
+  const handleUpdateComboIngQty = (id, delta) => {
+    setComboSelectedIngredients(prev => {
+      const existing = prev.find(p => p.id === id);
+      if (!existing && delta > 0) {
+        return [...prev, { id, qty: delta }];
+      }
+      return prev
+        .map(p => (p.id === id ? { ...p, qty: Math.max(0, p.qty + delta) } : p))
+        .filter(p => p.qty > 0);
+    });
+  };
+
+  // Tính toán tự động cho Modal Tạo món ăn
+  const handleApplyIngredientsToNewRecipe = () => {
+    let cal = 0;
+    let protein = 0;
+    let carbs = 0;
+    let fat = 0;
+    let cost = 0;
+    const ingTexts = [];
+
+    selectedIngredientsInRecipe.forEach(sel => {
+      const ing = ingredients.find(i => i.id === sel.id);
+      if (ing && sel.qty > 0) {
+        cal += Math.round(ing.cal * sel.qty);
+        protein += Math.round(ing.protein * sel.qty);
+        carbs += Math.round(ing.carbs * sel.qty);
+        fat += Math.round(ing.fat * sel.qty);
+        cost += Math.round(ing.cost * sel.qty);
+        ingTexts.push(`${ing.name}: ${sel.qty} x ${ing.unit}`);
+      }
+    });
+
+    setNewRecipe(prev => ({
+      ...prev,
+      cal: cal || prev.cal,
+      protein: protein || prev.protein,
+      carbs: carbs || prev.carbs,
+      fat: fat || prev.fat,
+      cost: cost || prev.cost,
+      ingredientsText: ingTexts.length > 0 ? ingTexts.join('\n') : prev.ingredientsText
+    }));
+  };
+
+  // Submit Lưu món vào Thực đơn của tôi
   const handleCreateSubmit = (e) => {
     e.preventDefault();
     if (!newRecipe.name.trim()) return;
 
     const recipeToAdd = {
-      id: 'custom-' + Date.now(),
-      name: newRecipe.name,
+      id: 'my-' + Date.now(),
+      name: newRecipe.name.trim(),
       category: newRecipe.category,
       mealType: newRecipe.mealType,
       time: newRecipe.time,
@@ -2162,14 +2381,17 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
       fat: Number(newRecipe.fat),
       cost: Number(newRecipe.cost),
       emoji: newRecipe.emoji || '🍽️',
-      summary: newRecipe.summary || 'Món ăn do bạn tự sáng tạo.',
+      image: newRecipe.image.trim() || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+      summary: newRecipe.summary || 'Món ăn do bạn tự chuẩn bị và chế biến.',
+      beginnerTip: newRecipe.beginnerTip || 'Mẹo của bạn: Nêm nếm vừa phải, theo dõi thời gian nấu để thức ăn giữ được trọn vẹn chất đạm.',
       videoUrl: newRecipe.videoUrl.trim(),
       ingredients: newRecipe.ingredientsText.split('\n').filter(s => s.trim()),
       steps: newRecipe.stepsText.split('\n').filter(s => s.trim())
     };
 
-    onAddRecipe(recipeToAdd);
+    onCreateMyRecipe(recipeToAdd);
     setShowCreateModal(false);
+    setSelectedIngredientsInRecipe([]);
     setNewRecipe({
       name: '',
       category: 'High Protein',
@@ -2181,10 +2403,49 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
       fat: 10,
       cost: 35000,
       emoji: '🍲',
+      image: '',
       summary: '',
+      beginnerTip: '',
       videoUrl: '',
       ingredientsText: '',
       stepsText: ''
+    });
+  };
+
+  // Submit Lưu Combo mới
+  const handleSaveCustomCombo = () => {
+    if (!newCombo.name.trim()) {
+      notify('Vui lòng nhập tên Combo!');
+      return;
+    }
+    if (comboTotals.itemsList.length === 0) {
+      notify('Vui lòng chọn ít nhất 1 nguyên liệu cho combo!');
+      return;
+    }
+
+    const created = {
+      id: 'combo-' + Date.now(),
+      name: newCombo.name.trim(),
+      target: newCombo.goal,
+      mealType: newCombo.bestTime,
+      image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80',
+      items: comboTotals.itemsList,
+      cal: comboTotals.cal,
+      protein: comboTotals.protein,
+      carbs: comboTotals.carbs,
+      fat: comboTotals.fat,
+      cost: comboTotals.cost,
+      summary: newCombo.summary || `Combo tự phối: ${comboTotals.cal} kcal, ${comboTotals.protein}g Protein chuẩn dinh dưỡng.`
+    };
+
+    onCreateCombo(created);
+    setShowComboCreator(false);
+    setNewCombo({
+      name: '',
+      icon: '🍱',
+      goal: 'Tăng cơ nạc (Lean Bulk)',
+      bestTime: 'Trưa',
+      summary: ''
     });
   };
 
@@ -2192,114 +2453,645 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
-        <div className="recipe-filter-bar" style={{ margin: 0 }}>
-          {categories.map(c => (
-            <button
-              key={c}
-              className={'filter-btn ' + (filter === c ? 'active' : '')}
-              onClick={() => setFilter(c)}
-            >
-              {c === 'High Protein' ? '🥩 Giàu Protein' : c === 'Budget Friendly' ? '💰 Tiết kiệm' : c === 'Mass Gainer' ? '⚡ Tăng cân calo cao' : c}
-            </button>
-          ))}
-        </div>
-
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <input
-            style={{
-              padding: '10px 16px',
-              borderRadius: 20,
-              border: '1px solid var(--border-card)',
-              background: 'var(--bg-card)',
-              color: 'var(--text-main)',
-              fontSize: 13,
-              outline: 'none',
-              minWidth: 220
-            }}
-            placeholder="🔍 Tìm theo món, ức gà, trứng..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          <button className="primary" onClick={() => setShowCreateModal(true)} style={{ fontSize: 13 }}>
-            <I.Plus size={16} /> Thêm công thức món ăn mới
-          </button>
-        </div>
+      {/* 3 SUB-NAVIGATION TABS */}
+      <div className="sub-nav-tabs">
+        <button
+          className={'sub-nav-tab ' + (tab === 'suggested' ? 'active' : '')}
+          onClick={() => setTab('suggested')}
+        >
+          <I.Sparkles size={17} /> ✨ Thực đơn gợi ý (Ảnh thật & Cách nấu)
+        </button>
+        <button
+          className={'sub-nav-tab ' + (tab === 'my_recipes' ? 'active' : '')}
+          onClick={() => setTab('my_recipes')}
+        >
+          <I.BookOpen size={17} /> 📋 Thực đơn của tôi ({myRecipes.length})
+        </button>
+        <button
+          className={'sub-nav-tab ' + (tab === 'combos' ? 'active' : '')}
+          onClick={() => setTab('combos')}
+        >
+          <I.ChefHat size={17} /> 🍱 Combo Bữa Ăn & Tính Calo ({combos.length})
+        </button>
       </div>
 
-      {/* Recipe Cards Grid */}
-      <div className="recipe-grid">
-        {filteredRecipes.map(recipe => (
-          <div className="recipe-card" key={recipe.id || recipe.name}>
-            <div className="recipe-header">
-              <div className="food-emoji">{recipe.emoji}</div>
-              <div style={{ flex: 1 }}>
-                <h3>{recipe.name}</h3>
-                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                  ⏱ {recipe.time} · {recipe.mealType} · {money(recipe.cost)}
-                </span>
-              </div>
+      {/* ================= TAB 1: THỰC ĐƠN GỢI Ý ================= */}
+      {tab === 'suggested' && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
+            <div className="recipe-filter-bar" style={{ margin: 0 }}>
+              {categories.map(c => (
+                <button
+                  key={c}
+                  className={'filter-btn ' + (filter === c ? 'active' : '')}
+                  onClick={() => setFilter(c)}
+                >
+                  {c === 'High Protein' ? '🥩 Giàu Protein' : c === 'Budget Friendly' ? '💰 Tiết kiệm' : c === 'Mass Gainer' ? '⚡ Tăng cân calo cao' : c}
+                </button>
+              ))}
             </div>
 
-            <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5, flex: 1 }}>
-              {recipe.summary}
-            </p>
-
-            <div className="recipe-macros">
-              <div className="recipe-macros-item">
-                <span>Calo</span>
-                <b>{recipe.cal} kcal</b>
-              </div>
-              <div className="recipe-macros-item">
-                <span>Protein</span>
-                <b style={{ color: '#0284c7' }}>{recipe.protein}g</b>
-              </div>
-              <div className="recipe-macros-item">
-                <span>Carbs</span>
-                <b>{recipe.carbs || 0}g</b>
-              </div>
-              <div className="recipe-macros-item">
-                <span>Chất béo</span>
-                <b>{recipe.fat || 0}g</b>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
-              <button
-                className="btn-secondary"
-                onClick={() => setActiveRecipe(recipe)}
-                style={{ flex: 1, padding: '10px', fontSize: 13, borderRadius: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6 }}
-              >
-                <I.BookOpen size={15} /> Xem cách nấu {recipe.videoUrl ? '🎬' : ''}
-              </button>
-              <button
-                className="primary"
-                onClick={() => {
-                  onAddMeal({
-                    name: 'Trưa',
-                    food: recipe.name,
-                    cal: Number(recipe.cal),
-                    protein: Number(recipe.protein),
-                    cost: Number(recipe.cost)
-                  });
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flex: 1, maxWidth: 360, minWidth: 240 }}>
+              <input
+                style={{
+                  width: '100%',
+                  padding: '11px 18px',
+                  borderRadius: 20,
+                  border: '1px solid var(--border-card)',
+                  background: 'var(--bg-card)',
+                  color: 'var(--text-main)',
+                  fontSize: 13.5,
+                  outline: 'none'
                 }}
-                style={{ padding: '10px 14px', fontSize: 13 }}
-                title="Thêm ngay vào thực đơn hôm nay"
-              >
-                + Ăn món này
+                placeholder="🔍 Tìm món, ức gà, bò, cá..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="recipe-grid">
+            {filteredSuggested.map(recipe => (
+              <div className="recipe-card" key={recipe.id || recipe.name}>
+                {/* Ảnh món ăn thật sắc nét */}
+                {recipe.image ? (
+                  <div className="recipe-img-box">
+                    <img src={recipe.image} alt={recipe.name} loading="lazy" />
+                    <span className="recipe-img-tag">
+                      {recipe.category === 'High Protein' ? '🥩 Giàu Protein' : recipe.category === 'Budget Friendly' ? '💰 Tiết kiệm' : '⚡ Tăng Calo'}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="food-emoji" style={{ fontSize: 44, padding: '16px 0' }}>{recipe.emoji}</div>
+                )}
+
+                <div className="recipe-header" style={{ marginTop: 4 }}>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ fontSize: 16.5, fontWeight: 800, marginBottom: 4 }}>{recipe.name}</h3>
+                    <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
+                      ⏱ {recipe.time} · {recipe.mealType} · <b style={{ color: '#0284c7' }}>{money(recipe.cost)}</b>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Mẹo dành cho người mới tập nấu */}
+                {recipe.beginnerTip && (
+                  <div className="beginner-tip-box">
+                    <span style={{ fontSize: 16 }}>💡</span>
+                    <span>{recipe.beginnerTip}</span>
+                  </div>
+                )}
+
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5, flex: 1 }}>
+                  {recipe.summary}
+                </p>
+
+                {/* Macro Chips */}
+                <div className="recipe-macros">
+                  <div className="recipe-macros-item">
+                    <span>Calo</span>
+                    <b>{recipe.cal} kcal</b>
+                  </div>
+                  <div className="recipe-macros-item">
+                    <span>Protein</span>
+                    <b style={{ color: '#0284c7' }}>{recipe.protein}g</b>
+                  </div>
+                  <div className="recipe-macros-item">
+                    <span>Carbs</span>
+                    <b>{recipe.carbs || 0}g</b>
+                  </div>
+                  <div className="recipe-macros-item">
+                    <span>Chất béo</span>
+                    <b>{recipe.fat || 0}g</b>
+                  </div>
+                </div>
+
+                {/* Các nút hành động */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
+                  <button
+                    className="btn-secondary"
+                    onClick={() => setActiveRecipe(recipe)}
+                    style={{ padding: '10px 8px', fontSize: 12.5, borderRadius: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6 }}
+                  >
+                    <I.BookOpen size={14} /> Cách nấu {recipe.videoUrl ? '🎬' : ''}
+                  </button>
+                  <button
+                    className="btn-secondary"
+                    onClick={() => onSaveToMyRecipes(recipe)}
+                    style={{ padding: '10px 8px', fontSize: 12.5, borderRadius: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, borderColor: '#0284c7', color: '#0284c7' }}
+                    title="Lưu món này vào danh sách Thực đơn của tôi"
+                  >
+                    <I.Bookmark size={14} /> Lưu vào Của tôi
+                  </button>
+                </div>
+
+                <button
+                  className="primary"
+                  onClick={() => handleLogMeal(recipe, 'Trưa')}
+                  style={{ width: '100%', marginTop: 6, padding: '10px 0', fontSize: 13, justifyContent: 'center' }}
+                >
+                  <I.Plus size={15} /> Ăn món này (Nạp bữa Trưa)
+                </button>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* ================= TAB 2: THỰC ĐƠN CỦA TÔI ================= */}
+      {tab === 'my_recipes' && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
+            <div>
+              <h2 style={{ margin: '0 0 4px', fontSize: 20 }}>Món ăn do bạn thực hiện & lưu lại</h2>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                Tự tạo món mới có bảng tính Calo tự động từ nguyên liệu hoặc lưu từ thực đơn gợi ý.
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <input
+                style={{
+                  padding: '10px 16px',
+                  borderRadius: 20,
+                  border: '1px solid var(--border-card)',
+                  background: 'var(--bg-card)',
+                  color: 'var(--text-main)',
+                  fontSize: 13,
+                  outline: 'none',
+                  minWidth: 200
+                }}
+                placeholder="🔍 Tìm món của bạn..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+              <button className="primary" onClick={() => setShowCreateModal(true)} style={{ fontSize: 13 }}>
+                <I.Plus size={16} /> Tạo món mới (Tự tính Calo)
               </button>
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* FULL-SIZED RECIPE DETAIL & VIDEO MODAL */}
+          {filteredMyRecipes.length === 0 ? (
+            <div style={{
+              background: 'var(--bg-card)',
+              border: '1px dashed var(--border-card)',
+              borderRadius: 20,
+              padding: '48px 24px',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 14
+            }}>
+              <span style={{ fontSize: 44 }}>👨‍🍳</span>
+              <b style={{ fontSize: 17 }}>Bạn chưa lưu món ăn nào trong thực đơn cá nhân!</b>
+              <p style={{ maxWidth: 480, fontSize: 13.5, color: 'var(--text-muted)', margin: 0, lineHeight: 1.6 }}>
+                Bạn có thể qua tab <b>"✨ Thực đơn gợi ý"</b> bấm nút <b>"Lưu vào Của tôi"</b> ở bất kỳ món nào bạn thích, hoặc bấm nút dưới đây để tạo món với bảng tính Calo tự động.
+              </p>
+              <div style={{ display: 'flex', gap: 12, marginTop: 6 }}>
+                <button className="btn-secondary" onClick={() => setTab('suggested')}>
+                  Xem Thực đơn gợi ý
+                </button>
+                <button className="primary" onClick={() => setShowCreateModal(true)}>
+                  <I.Plus size={16} /> Tạo món ăn mới ngay
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="recipe-grid">
+              {filteredMyRecipes.map(recipe => (
+                <div className="recipe-card" key={recipe.id || recipe.name}>
+                  {recipe.image ? (
+                    <div className="recipe-img-box">
+                      <img src={recipe.image} alt={recipe.name} loading="lazy" />
+                      <span className="recipe-img-tag" style={{ background: '#0284c7' }}>
+                        ⭐ Món của tôi
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="food-emoji" style={{ fontSize: 44, padding: '16px 0' }}>{recipe.emoji}</div>
+                  )}
+
+                  <div className="recipe-header" style={{ marginTop: 4 }}>
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ fontSize: 16.5, fontWeight: 800, marginBottom: 4 }}>{recipe.name}</h3>
+                      <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
+                        ⏱ {recipe.time} · {recipe.mealType} · <b style={{ color: '#0284c7' }}>{money(recipe.cost)}</b>
+                      </span>
+                    </div>
+                  </div>
+
+                  {recipe.beginnerTip && (
+                    <div className="beginner-tip-box">
+                      <span style={{ fontSize: 16 }}>💡</span>
+                      <span>{recipe.beginnerTip}</span>
+                    </div>
+                  )}
+
+                  <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5, flex: 1 }}>
+                    {recipe.summary}
+                  </p>
+
+                  <div className="recipe-macros">
+                    <div className="recipe-macros-item">
+                      <span>Calo</span>
+                      <b>{recipe.cal} kcal</b>
+                    </div>
+                    <div className="recipe-macros-item">
+                      <span>Protein</span>
+                      <b style={{ color: '#0284c7' }}>{recipe.protein}g</b>
+                    </div>
+                    <div className="recipe-macros-item">
+                      <span>Carbs</span>
+                      <b>{recipe.carbs || 0}g</b>
+                    </div>
+                    <div className="recipe-macros-item">
+                      <span>Chất béo</span>
+                      <b>{recipe.fat || 0}g</b>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 8, marginTop: 8 }}>
+                    <button
+                      className="btn-secondary"
+                      onClick={() => setActiveRecipe(recipe)}
+                      style={{ padding: '10px 8px', fontSize: 12.5, borderRadius: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6 }}
+                    >
+                      <I.BookOpen size={14} /> Xem cách làm
+                    </button>
+                    <button
+                      className="action-icon-btn"
+                      onClick={() => onDeleteMyRecipe(recipe.id)}
+                      title="Xóa món khỏi thực đơn của tôi"
+                      style={{ border: '1px solid var(--border-card)', borderRadius: 10, width: 40, height: 40 }}
+                    >
+                      <I.Trash2 size={16} />
+                    </button>
+                  </div>
+
+                  <button
+                    className="primary"
+                    onClick={() => handleLogMeal(recipe, 'Trưa')}
+                    style={{ width: '100%', marginTop: 6, padding: '10px 0', fontSize: 13, justifyContent: 'center' }}
+                  >
+                    <I.Plus size={15} /> Ăn món này hôm nay
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ================= TAB 3: COMBO BỮA ĂN & TÍNH CALO ================= */}
+      {tab === 'combos' && (
+        <>
+          {/* Header & Toggle Trình tạo Combo */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
+            <div>
+              <h2 style={{ margin: '0 0 4px', fontSize: 20 }}>Combo Bữa Ăn Chuẩn Khoa Học</h2>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                Nạp trọn gói 1 chạm hoặc tự phối hợp nguyên liệu để máy tự động tính toàn bộ Calo, Protein & Giá tiền.
+              </span>
+            </div>
+
+            <button
+              className={showComboCreator ? 'btn-secondary' : 'primary'}
+              onClick={() => setShowComboCreator(!showComboCreator)}
+              style={{ fontSize: 13.5, gap: 8 }}
+            >
+              <I.Calculator size={17} />
+              {showComboCreator ? 'Đóng Trình tạo Combo' : '🧮 Mở Trình Tạo Combo Mới (Tự Tính Calo)'}
+            </button>
+          </div>
+
+          {/* DYNAMIC CALCULATOR & COMBO CREATOR PANEL */}
+          {showComboCreator && (
+            <div className="calculator-panel">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, borderBottom: '1px solid var(--border-subtle)', paddingBottom: 12 }}>
+                <div>
+                  <h3 style={{ margin: '0 0 4px', fontSize: 18, color: '#0284c7' }}>
+                    🧮 Trình Tạo Combo Bữa Ăn - Tự Động Tính Calo & Macro
+                  </h3>
+                  <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
+                    Bấm chọn nguyên liệu và số lượng, hệ thống sẽ tự động cộng dồn dinh dưỡng theo thời gian thực!
+                  </span>
+                </div>
+                <button className="modal-close" onClick={() => setShowComboCreator(false)}>✕</button>
+              </div>
+
+              {/* Thông tin Combo */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginBottom: 18 }}>
+                <div className="input-row">
+                  <label>Tên Combo bữa ăn</label>
+                  <input
+                    placeholder="Ví dụ: Combo Trưa Tăng Cơ 60g Protein..."
+                    value={newCombo.name}
+                    onChange={e => setNewCombo({ ...newCombo, name: e.target.value })}
+                  />
+                </div>
+                <div className="input-row">
+                  <label>Mục tiêu dinh dưỡng</label>
+                  <select
+                    value={newCombo.goal}
+                    onChange={e => setNewCombo({ ...newCombo, goal: e.target.value })}
+                  >
+                    <option value="Tăng cơ nạc (Lean Bulk)">Tăng cơ nạc (Lean Bulk)</option>
+                    <option value="Giảm mỡ giữ cơ (Cutting)">Giảm mỡ giữ cơ (Cutting)</option>
+                    <option value="Tiết kiệm học sinh sinh viên">Tiết kiệm học sinh sinh viên</option>
+                    <option value="Nhanh gọn dưới 10 phút">Nhanh gọn dưới 10 phút</option>
+                  </select>
+                </div>
+                <div className="input-row">
+                  <label>Gợi ý thời điểm ăn</label>
+                  <select
+                    value={newCombo.bestTime}
+                    onChange={e => setNewCombo({ ...newCombo, bestTime: e.target.value })}
+                  >
+                    <option value="Sáng">Bữa Sáng</option>
+                    <option value="Trưa">Bữa Trưa</option>
+                    <option value="Tối">Bữa Tối</option>
+                    <option value="Snack">Bữa Phụ (Snack)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Bộ chọn nguyên liệu chuẩn gym */}
+              <div style={{ marginBottom: 20 }}>
+                <b style={{ display: 'block', fontSize: 13.5, marginBottom: 10 }}>
+                  🛒 Bấm chọn nguyên liệu đưa vào combo (Đã có định lượng & calo chuẩn):
+                </b>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                  gap: 10,
+                  maxHeight: 220,
+                  overflowY: 'auto',
+                  padding: 8,
+                  background: 'var(--bg-subtle)',
+                  borderRadius: 14,
+                  border: '1px solid var(--border-subtle)'
+                }}>
+                  {ingredients.map(ing => {
+                    const selected = comboSelectedIngredients.find(s => s.id === ing.id);
+                    const qty = selected ? selected.qty : 0;
+                    return (
+                      <div
+                        key={ing.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '8px 12px',
+                          background: qty > 0 ? 'var(--primary-light)' : 'var(--bg-card)',
+                          border: `1px solid ${qty > 0 ? 'var(--primary-border)' : 'var(--border-card)'}`,
+                          borderRadius: 10,
+                          fontSize: 13
+                        }}
+                      >
+                        <div style={{ flex: 1, minWidth: 0, paddingRight: 8 }}>
+                          <b style={{ display: 'block', fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {ing.name}
+                          </b>
+                          <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
+                            {ing.unit} · {ing.cal} kcal · {ing.protein}g đạm · {money(ing.cost)}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateComboIngQty(ing.id, -1)}
+                            disabled={qty === 0}
+                            style={{ width: 26, height: 26, borderRadius: 6, border: '1px solid var(--border-card)', background: 'var(--bg-card)', cursor: qty === 0 ? 'not-allowed' : 'pointer', fontWeight: 900 }}
+                          >
+                            -
+                          </button>
+                          <span style={{ minWidth: 20, textAlign: 'center', fontWeight: 800, color: qty > 0 ? '#0284c7' : 'inherit' }}>
+                            {qty}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateComboIngQty(ing.id, 1)}
+                            style={{ width: 26, height: 26, borderRadius: 6, border: '1px solid var(--border-card)', background: 'var(--bg-card)', cursor: 'pointer', fontWeight: 900 }}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* BẢNG KẾT QUẢ TÍNH TOÁN CALO & MACRO TỰ ĐỘNG THEO THỜI GIAN THỰC */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(56, 189, 248, 0.08))',
+                border: '1px solid var(--primary-border)',
+                borderRadius: 16,
+                padding: '16px 20px',
+                marginBottom: 20
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
+                  <b style={{ fontSize: 14, color: '#0284c7' }}>
+                    ⚡ KẾT QUẢ TÍNH TOÁN DINH DƯỠNG TỰ ĐỘNG ({comboTotals.itemsList.length} thành phần):
+                  </b>
+                  <span style={{ fontSize: 13, fontWeight: 800 }}>
+                    Ước tính chi phí: <b style={{ color: '#0284c7' }}>{money(comboTotals.cost)}</b>
+                  </span>
+                </div>
+
+                <div className="macro-chips-row" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+                  <div className="macro-chip">
+                    <span className="macro-lbl">TỔNG CALORIES</span>
+                    <span className="macro-val">{comboTotals.cal} kcal</span>
+                  </div>
+                  <div className="macro-chip">
+                    <span className="macro-lbl">PROTEIN (ĐẠM)</span>
+                    <span className="macro-val" style={{ color: '#0284c7' }}>{comboTotals.protein}g</span>
+                  </div>
+                  <div className="macro-chip">
+                    <span className="macro-lbl">CARBS (TINH BỘT)</span>
+                    <span className="macro-val">{comboTotals.carbs}g</span>
+                  </div>
+                  <div className="macro-chip">
+                    <span className="macro-lbl">CHẤT BÉO (FAT)</span>
+                    <span className="macro-val">{comboTotals.fat}g</span>
+                  </div>
+                </div>
+
+                {/* Danh sách thành phần đã chọn */}
+                <div style={{ marginTop: 12, fontSize: 12.5, color: 'var(--text-muted)' }}>
+                  <b>Thành phần chi tiết: </b>
+                  {comboTotals.itemsList.length > 0 ? comboTotals.itemsList.join(', ') : 'Chưa chọn nguyên liệu nào.'}
+                </div>
+              </div>
+
+              {/* Nút hành động */}
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => setShowComboCreator(false)}
+                >
+                  Đóng
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => {
+                    if (comboTotals.itemsList.length === 0) return notify('Chưa có nguyên liệu trong combo!');
+                    onEatCombo({
+                      name: newCombo.name || 'Combo Tự Phối',
+                      items: comboTotals.itemsList,
+                      cal: comboTotals.cal,
+                      protein: comboTotals.protein,
+                      cost: comboTotals.cost
+                    }, comboMealType);
+                  }}
+                  style={{ borderColor: '#0284c7', color: '#0284c7' }}
+                >
+                  ⚡ Ăn ngay hôm nay (Nạp vào {comboMealType})
+                </button>
+                <button
+                  type="button"
+                  className="primary"
+                  onClick={handleSaveCustomCombo}
+                >
+                  <I.Check size={16} /> Lưu vào danh mục Combo của tôi
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* DANH SÁCH CÁC COMBO HIỆN CÓ */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 20 }}>
+            {combos.map((combo, idx) => {
+              const itemsArray = Array.isArray(combo.items)
+                ? combo.items.map(it => (typeof it === 'string' ? it : it.name))
+                : [combo.items];
+
+              return (
+                <div className="combo-card" key={combo.id || idx}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
+                    <div>
+                      <span style={{ fontSize: 11.5, fontWeight: 800, color: '#0284c7', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                        🎯 {combo.target || 'Bữa ăn chuẩn Gym'}
+                      </span>
+                      <h3 style={{ margin: '4px 0 2px', fontSize: 17, fontWeight: 800 }}>
+                        {combo.name}
+                      </h3>
+                      <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
+                        Bữa thích hợp: {combo.mealType || 'Trưa / Tối'} · Chi phí: <b style={{ color: '#0284c7' }}>{money(combo.cost || 0)}</b>
+                      </span>
+                    </div>
+                    {combo.id && combo.id.startsWith('combo-') && (
+                      <button
+                        className="action-icon-btn"
+                        onClick={() => onDeleteCombo(combo.id)}
+                        title="Xóa combo này"
+                        style={{ border: '1px solid var(--border-card)', borderRadius: 8 }}
+                      >
+                        <I.Trash2 size={15} />
+                      </button>
+                    )}
+                  </div>
+
+                  {combo.summary && (
+                    <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                      {combo.summary}
+                    </p>
+                  )}
+
+                  {/* Danh sách thành phần cụ thể */}
+                  <div className="combo-items-list">
+                    <b style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 2 }}>
+                      🍱 Thành phần món trong Combo:
+                    </b>
+                    {itemsArray.map((it, i) => (
+                      <div className="combo-item-row" key={i}>
+                        <span>✓ {it}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Dinh dưỡng Combo to rõ */}
+                  <div className="recipe-macros">
+                    <div className="recipe-macros-item">
+                      <span>Calo</span>
+                      <b>{combo.cal} kcal</b>
+                    </div>
+                    <div className="recipe-macros-item">
+                      <span>Protein</span>
+                      <b style={{ color: '#0284c7' }}>{combo.protein}g</b>
+                    </div>
+                    <div className="recipe-macros-item">
+                      <span>Carbs</span>
+                      <b>{combo.carbs || 0}g</b>
+                    </div>
+                    <div className="recipe-macros-item">
+                      <span>Chất béo</span>
+                      <b>{combo.fat || 0}g</b>
+                    </div>
+                  </div>
+
+                  {/* Nạp 1 chạm vào bữa hôm nay */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    background: 'var(--bg-subtle)',
+                    padding: '8px 12px',
+                    borderRadius: 12,
+                    marginTop: 'auto'
+                  }}>
+                    <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                      Nạp bữa:
+                    </span>
+                    <select
+                      defaultValue={combo.mealType === 'Sáng' ? 'Sáng' : 'Trưa'}
+                      id={`combo-sel-${combo.id || idx}`}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: 8,
+                        background: 'var(--bg-card)',
+                        color: 'var(--text-main)',
+                        border: '1px solid var(--border-card)',
+                        fontSize: 12.5
+                      }}
+                    >
+                      <option value="Sáng">Sáng</option>
+                      <option value="Trưa">Trưa</option>
+                      <option value="Tối">Tối</option>
+                      <option value="Snack">Snack</option>
+                    </select>
+
+                    <button
+                      className="primary"
+                      onClick={() => {
+                        const selEl = document.getElementById(`combo-sel-${combo.id || idx}`);
+                        const chosenMeal = selEl ? selEl.value : 'Trưa';
+                        onEatCombo(combo, chosenMeal);
+                      }}
+                      style={{ flex: 1, padding: '8px 12px', fontSize: 12.5, justifyContent: 'center' }}
+                    >
+                      ⚡ Nạp Combo vào hôm nay
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {/* ================= MODAL XEM CÁCH NẤU CHI TIẾT & VIDEO YOUTUBE ================= */}
       {activeRecipe && (
         <div className="modal-backdrop" onClick={() => setActiveRecipe(null)}>
           <div className="modal modal-xl" onClick={e => e.stopPropagation()}>
             <div className="modal-head">
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <span style={{ fontSize: 36 }}>{activeRecipe.emoji}</span>
+                <span style={{ fontSize: 36 }}>{activeRecipe.emoji || '🍲'}</span>
                 <div>
                   <h3 style={{ margin: 0, fontSize: 22 }}>{activeRecipe.name}</h3>
                   <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
@@ -2311,10 +3103,27 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
             </div>
 
             <div className="modal-body">
+              {/* Ảnh món ăn thật lớn & sắc nét */}
+              {activeRecipe.image && (
+                <div style={{ width: '100%', height: 260, borderRadius: 18, overflow: 'hidden', marginBottom: 20 }}>
+                  <img src={activeRecipe.image} alt={activeRecipe.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              )}
+
+              {/* Mẹo chi tiết cho người mới học nấu ăn */}
+              {activeRecipe.beginnerTip && (
+                <div className="beginner-tip-box" style={{ marginBottom: 20, padding: 16 }}>
+                  <span style={{ fontSize: 22 }}>💡</span>
+                  <div>
+                    <b style={{ display: 'block', fontSize: 14, marginBottom: 4 }}>Bí quyết cho người mới học nấu ăn:</b>
+                    <span style={{ fontSize: 13.5 }}>{activeRecipe.beginnerTip}</span>
+                  </div>
+                </div>
+              )}
+
               <div className="modal-two-col">
-                {/* Cột 1: Thông tin, Dinh dưỡng, Nguyên liệu & Nạp món */}
+                {/* Cột 1: Dinh dưỡng & Nguyên liệu */}
                 <div>
-                  {/* Macro Chips Grid to rõ ràng không dính chữ */}
                   <div className="macro-chips-row">
                     <div className="macro-chip">
                       <span className="macro-lbl">CALORIES</span>
@@ -2334,24 +3143,23 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
                     </div>
                   </div>
 
-                  <p style={{ fontSize: 13.5, color: 'var(--text-muted)', lineHeight: 1.6, margin: '0 0 16px' }}>
+                  <p style={{ fontSize: 13.5, color: 'var(--text-muted)', lineHeight: 1.6, margin: '14px 0 16px' }}>
                     {activeRecipe.summary}
                   </p>
 
-                  {/* Ingredients */}
                   <div style={{ marginBottom: 16 }}>
                     <b style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>🛒 Nguyên liệu cần chuẩn bị:</b>
                     <div className="ingredient-tags">
-                      {activeRecipe.ingredients.map((ing, i) => (
+                      {activeRecipe.ingredients && activeRecipe.ingredients.map((ing, i) => (
                         <span className="ing-tag" key={i}>✓ {ing}</span>
                       ))}
                     </div>
                   </div>
 
-                  {/* Log Meal Box */}
+                  {/* Nạp vào bữa hôm nay */}
                   <div style={{ background: 'var(--primary-light)', padding: 18, borderRadius: 16, border: '1px solid var(--primary-border)' }}>
                     <b style={{ display: 'block', marginBottom: 10, fontSize: 13.5, color: '#0284c7' }}>
-                      ➕ Nạp món này vào Nhật ký dinh dưỡng hôm nay:
+                      ➕ Nạp món này vào Nhật ký hôm nay:
                     </b>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                       <span style={{ fontSize: 13, color: 'var(--text-main)', fontWeight: 600 }}>Chọn bữa:</span>
@@ -2365,20 +3173,19 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
                         <option value="Tối">Bữa Tối</option>
                         <option value="Snack">Bữa Phụ (Snack)</option>
                       </select>
-                      <button className="primary" onClick={() => handleLogMeal(activeRecipe)} style={{ marginLeft: 'auto', fontSize: 13 }}>
+                      <button className="primary" onClick={() => handleLogMeal(activeRecipe, selectedMealType)} style={{ marginLeft: 'auto', fontSize: 13 }}>
                         Nạp vào nhật ký
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Cột 2: Video Hướng dẫn nấu ăn & Các bước chi tiết */}
+                {/* Cột 2: Video Youtube & Từng bước nấu */}
                 <div>
-                  {/* Video Player */}
                   {youtubeEmbed ? (
                     <div>
-                      <b style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>🎬 Video hướng dẫn nấu ăn:</b>
-                      <div className="video-frame-wrap">
+                      <b style={{ display: 'block', fontSize: 14, marginBottom: 8 }}>🎬 Video hướng dẫn xem trực tiếp:</b>
+                      <div className="video-frame-wrap" style={{ marginBottom: 18 }}>
                         <iframe
                           src={youtubeEmbed}
                           title={activeRecipe.name}
@@ -2388,29 +3195,21 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
                       </div>
                     </div>
                   ) : activeRecipe.videoUrl ? (
-                    <div className="video-link-banner">
+                    <div className="video-link-banner" style={{ marginBottom: 18 }}>
                       <div>
-                        <b>🎬 Video / Hướng dẫn nấu ăn:</b>
-                        <span style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)' }}>Xem clip trên web nguồn</span>
+                        <b>🎬 Video / Clip hướng dẫn:</b>
+                        <span style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)' }}>Mở liên kết trên web</span>
                       </div>
                       <a href={activeRecipe.videoUrl} target="_blank" rel="noopener noreferrer">
                         Mở video <I.ExternalLink size={14} />
                       </a>
                     </div>
-                  ) : (
-                    <div className="video-link-banner" style={{ background: 'var(--bg-subtle)' }}>
-                      <div>
-                        <b>🎬 Chưa có link video:</b>
-                        <span style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)' }}>Bạn có thể thêm link video Youtube khi tạo món mới</span>
-                      </div>
-                    </div>
-                  )}
+                  ) : null}
 
-                  {/* Cooking Steps */}
                   <div>
                     <b style={{ display: 'block', marginBottom: 10, fontSize: 14 }}>👨‍🍳 Các bước thực hiện chi tiết:</b>
                     <ol className="recipe-steps">
-                      {activeRecipe.steps.map((st, i) => (
+                      {activeRecipe.steps && activeRecipe.steps.map((st, i) => (
                         <li key={i}>{st}</li>
                       ))}
                     </ol>
@@ -2423,24 +3222,114 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
               <button className="btn-secondary" onClick={() => setActiveRecipe(null)}>
                 Đóng
               </button>
+              {tab === 'suggested' && (
+                <button
+                  className="btn-secondary"
+                  onClick={() => {
+                    onSaveToMyRecipes(activeRecipe);
+                    setActiveRecipe(null);
+                  }}
+                  style={{ borderColor: '#0284c7', color: '#0284c7' }}
+                >
+                  <I.Bookmark size={15} /> Lưu vào Thực đơn của tôi
+                </button>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* FULL-SIZED CREATE RECIPE MODAL */}
+      {/* ================= MODAL TẠO MÓN ĂN CỦA TÔI (CÓ BẢNG TÍNH CALO TỰ ĐỘNG) ================= */}
       {showCreateModal && (
         <div className="modal-backdrop" onClick={() => setShowCreateModal(false)}>
           <div className="modal modal-xl" onClick={e => e.stopPropagation()}>
             <div className="modal-head">
-              <h3>Thêm công thức món ăn mới của bạn</h3>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 20 }}>Tạo món ăn mới của bạn</h3>
+                <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
+                  Bạn có thể chọn nguyên liệu bên dưới để máy tự tính toán Calo & Dinh dưỡng hoặc tự nhập.
+                </span>
+              </div>
               <button className="modal-close" onClick={() => setShowCreateModal(false)}>✕</button>
             </div>
+
             <form onSubmit={handleCreateSubmit}>
               <div className="modal-body">
-                <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr 1fr', gap: 14 }}>
+                {/* Bộ chọn nguyên liệu để máy tự tính */}
+                <div style={{
+                  background: 'var(--bg-subtle)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 16,
+                  padding: 16,
+                  marginBottom: 20
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <b style={{ fontSize: 13.5, color: '#0284c7' }}>
+                      🧮 Chọn nhanh nguyên liệu chuẩn (Máy sẽ tự động tính Calo, Protein & Giá):
+                    </b>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={handleApplyIngredientsToNewRecipe}
+                      style={{ fontSize: 12, padding: '4px 10px' }}
+                    >
+                      Áp dụng vào món ăn ⬇
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', maxHeight: 130, overflowY: 'auto', padding: 4 }}>
+                    {ingredients.map(ing => {
+                      const sel = selectedIngredientsInRecipe.find(s => s.id === ing.id);
+                      const qty = sel ? sel.qty : 0;
+                      return (
+                        <button
+                          key={ing.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedIngredientsInRecipe(prev => {
+                              const exists = prev.find(p => p.id === ing.id);
+                              if (exists) {
+                                return prev.map(p => p.id === ing.id ? { ...p, qty: p.qty + 1 } : p);
+                              }
+                              return [...prev, { id: ing.id, qty: 1 }];
+                            });
+                          }}
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: 12,
+                            fontSize: 12,
+                            border: `1px solid ${qty > 0 ? '#0284c7' : 'var(--border-card)'}`,
+                            background: qty > 0 ? 'var(--primary-light)' : 'var(--bg-card)',
+                            color: qty > 0 ? '#0284c7' : 'var(--text-main)',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6
+                          }}
+                        >
+                          <span>{ing.name} ({ing.unit})</span>
+                          {qty > 0 && <b style={{ background: '#0284c7', color: '#fff', borderRadius: 10, padding: '1px 6px', fontSize: 11 }}>x{qty}</b>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {selectedIngredientsInRecipe.length > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedIngredientsInRecipe([])}
+                        style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
+                      >
+                        Xóa chọn nguyên liệu
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Form điền thông tin */}
+                <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: 14 }}>
                   <div className="input-row">
-                    <label>Icon Emoji</label>
+                    <label>Icon</label>
                     <input
                       value={newRecipe.emoji}
                       onChange={e => setNewRecipe({ ...newRecipe, emoji: e.target.value })}
@@ -2451,7 +3340,7 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
                     <label>Tên món ăn</label>
                     <input
                       required
-                      placeholder="Ví dụ: Bò lúc lắc khoai tây, Cá thu sốt cà..."
+                      placeholder="Ví dụ: Bò xào súp lơ, Ức gà nướng bơ tỏi..."
                       value={newRecipe.name}
                       onChange={e => setNewRecipe({ ...newRecipe, name: e.target.value })}
                     />
@@ -2514,30 +3403,40 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
                   </div>
                 </div>
 
-                <div className="input-row">
-                  <label>🎬 Link Video hoặc bài hướng dẫn nấu ăn (Youtube, TikTok, Web...)</label>
-                  <input
-                    placeholder="Dán link Youtube https://www.youtube.com/watch?v=... để xem trực tiếp"
-                    value={newRecipe.videoUrl}
-                    onChange={e => setNewRecipe({ ...newRecipe, videoUrl: e.target.value })}
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                  <div className="input-row">
+                    <label>Ảnh món ăn (URL ảnh thật trên mạng)</label>
+                    <input
+                      placeholder="https://images.unsplash.com/... hoặc dán link ảnh món của bạn"
+                      value={newRecipe.image}
+                      onChange={e => setNewRecipe({ ...newRecipe, image: e.target.value })}
+                    />
+                  </div>
+                  <div className="input-row">
+                    <label>🎬 Link Video / Youtube hướng dẫn</label>
+                    <input
+                      placeholder="Dán link Youtube https://www.youtube.com/watch?v=..."
+                      value={newRecipe.videoUrl}
+                      onChange={e => setNewRecipe({ ...newRecipe, videoUrl: e.target.value })}
+                    />
+                  </div>
                 </div>
 
                 <div className="input-row">
-                  <label>Mô tả ngắn món ăn</label>
+                  <label>💡 Mẹo nấu cho người mới (Thời gian lửa, độ chín, cách ướp...)</label>
                   <input
-                    placeholder="Món ăn nhiều đạm, thơm ngon, làm nhanh cho người tập gym..."
-                    value={newRecipe.summary}
-                    onChange={e => setNewRecipe({ ...newRecipe, summary: e.target.value })}
+                    placeholder="Ví dụ: Đậy vung chảo 2 phút cho thịt mềm mọng không bị khô..."
+                    value={newRecipe.beginnerTip}
+                    onChange={e => setNewRecipe({ ...newRecipe, beginnerTip: e.target.value })}
                   />
                 </div>
 
                 <div className="modal-two-col">
                   <div className="input-row">
-                    <label>🛒 Nguyên liệu cần có (mỗi dòng 1 nguyên liệu)</label>
+                    <label>🛒 Nguyên liệu (mỗi dòng 1 nguyên liệu)</label>
                     <textarea
                       rows="4"
-                      placeholder="200g ức gà&#10;1 quả cà chua&#10;1 củ tỏi băm..."
+                      placeholder="200g ức gà tươi&#10;1 nhánh gừng nhỏ&#10;1 quả chanh, muối tiêu..."
                       value={newRecipe.ingredientsText}
                       onChange={e => setNewRecipe({ ...newRecipe, ingredientsText: e.target.value })}
                     />
@@ -2546,7 +3445,7 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
                     <label>👨‍🍳 Cách làm từng bước (mỗi dòng 1 bước)</label>
                     <textarea
                       rows="4"
-                      placeholder="Bước 1: Rửa sạch và khứa nhẹ...&#10;Bước 2: Ướp gia vị trong 10 phút...&#10;Bước 3: Áp chảo mỗi mặt 4 phút..."
+                      placeholder="Bước 1: Rửa sạch và thấm khô...&#10;Bước 2: Ướp tiêu và chút hạt nêm...&#10;Bước 3: Áp chảo mỗi mặt 4 phút..."
                       value={newRecipe.stepsText}
                       onChange={e => setNewRecipe({ ...newRecipe, stepsText: e.target.value })}
                     />
@@ -2559,7 +3458,7 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
                   Hủy
                 </button>
                 <button type="submit" className="primary">
-                  Lưu món ăn
+                  Lưu vào Thực đơn của tôi
                 </button>
               </div>
             </form>
@@ -2571,7 +3470,7 @@ function RecipesPage({ recipes, onAddMeal, onAddRecipe, notify }) {
 }
 
 // ---------------- NUTRITION LOG COMPONENT ----------------
-function Nutrition({ data, consumed, protein, onAddMeal, onDeleteMeal, onOpenRecipes }) {
+function Nutrition({ data, consumed, protein, combos = [], onAddMeal, onDeleteMeal, onEatCombo, onOpenRecipes }) {
   const [showAddMealModal, setShowAddMealModal] = useState(false);
   const [mealInput, setMealInput] = useState({
     name: 'Trưa',
@@ -2626,6 +3525,73 @@ function Nutrition({ data, consumed, protein, onAddMeal, onDeleteMeal, onOpenRec
           good
         />
       </div>
+
+      {/* QUICK COMBO CAROUSEL / SELECTOR */}
+      {combos.length > 0 && (
+        <Card style={{ marginBottom: 24, padding: '20px 22px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+            <div>
+              <span className="eyebrow" style={{ color: '#0284c7' }}>GỢI Ý DINH DƯỠNG NHANH</span>
+              <h3 style={{ margin: '2px 0 0', fontSize: 17, fontWeight: 800 }}>🍱 Nạp Nhanh Combo Bữa Ăn (1 Chạm)</h3>
+            </div>
+            <button className="btn-secondary" onClick={onOpenRecipes} style={{ fontSize: 12.5, padding: '7px 14px' }}>
+              <I.ChefHat size={15} /> Mở Trình Tạo Combo & Món Ăn
+            </button>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 12
+          }}>
+            {combos.slice(0, 3).map((combo, idx) => {
+              const itemsText = Array.isArray(combo.items)
+                ? combo.items.map(it => (typeof it === 'string' ? it : it.name)).slice(0, 2).join(' + ') + (combo.items.length > 2 ? '...' : '')
+                : combo.name;
+
+              return (
+                <div
+                  key={combo.id || idx}
+                  style={{
+                    background: 'var(--bg-subtle)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: 14,
+                    padding: '12px 14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <b style={{ fontSize: 13.5, color: 'var(--text-main)' }}>{combo.name}</b>
+                    <span style={{ fontSize: 11, background: 'var(--primary-light)', color: '#0284c7', padding: '2px 8px', borderRadius: 8, fontWeight: 700 }}>
+                      {combo.mealType || 'Trưa'}
+                    </span>
+                  </div>
+
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                    🥗 {itemsText}
+                  </span>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: 4 }}>
+                    <span style={{ fontSize: 12, fontWeight: 800 }}>
+                      🔥 {combo.cal} kcal · <b style={{ color: '#0284c7' }}>{combo.protein}g đạm</b>
+                    </span>
+                    <button
+                      className="primary"
+                      onClick={() => onEatCombo(combo, combo.mealType || 'Trưa')}
+                      style={{ padding: '6px 12px', fontSize: 12, borderRadius: 8 }}
+                      title="Nạp ngay combo này vào hôm nay"
+                    >
+                      + Nạp ngay
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
 
       <Card>
         <div className="section-head">
