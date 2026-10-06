@@ -189,7 +189,110 @@ function playBeep() {
   }
 }
 
+// Component hiệu ứng chuyển tông: Hoa anh đào rơi, Gió thổi lá xanh, Lá vàng mùa thu, Sóng biển dạt dào
+function ThemeAnimationOverlay({ effect, onDismiss }) {
+  useEffect(() => {
+    if (!effect) return;
+    const timer = setTimeout(() => {
+      onDismiss();
+    }, 4200);
+    return () => clearTimeout(timer);
+  }, [effect, onDismiss]);
+
+  if (!effect) return null;
+
+  return (
+    <div className="theme-effect-overlay" onClick={onDismiss} title="Nhấp để ẩn hiệu ứng">
+      {effect === 'pink' && (
+        <>
+          {Array.from({ length: 28 }).map((_, i) => (
+            <div
+              key={i}
+              className="sakura-petal"
+              style={{
+                left: `${((i * 3.6) + (i % 3) * 1.5) % 96}%`,
+                width: 13 + (i % 4) * 4,
+                height: 17 + (i % 3) * 5,
+                animationDelay: `${(i * 0.12).toFixed(2)}s`,
+                animationDuration: `${(2.8 + (i % 5) * 0.35).toFixed(2)}s`,
+                opacity: 0.9
+              }}
+            />
+          ))}
+        </>
+      )}
+
+      {effect === 'autumn' && (
+        <>
+          {Array.from({ length: 28 }).map((_, i) => {
+            const icons = ['🍂', '🍁', '🌾', '🍂', '🍁'];
+            const leaf = icons[i % icons.length];
+            return (
+              <div
+                key={i}
+                className="autumn-leaf-item"
+                style={{
+                  left: `${((i * 3.6) + (i % 4) * 1.8) % 96}%`,
+                  fontSize: `${20 + (i % 4) * 6}px`,
+                  animationDelay: `${(i * 0.12).toFixed(2)}s`,
+                  animationDuration: `${(3.0 + (i % 4) * 0.35).toFixed(2)}s`
+                }}
+              >
+                {leaf}
+              </div>
+            );
+          })}
+        </>
+      )}
+
+      {effect === 'green' && (
+        <>
+          {Array.from({ length: 26 }).map((_, i) => {
+            const icons = ['🍃', '🌿', '🌱', '🍃', '🌿'];
+            const leaf = icons[i % icons.length];
+            return (
+              <div
+                key={i}
+                className="green-wind-leaf-item"
+                style={{
+                  top: `${((i * 3.8) + (i % 3) * 2.2) % 92}%`,
+                  fontSize: `${20 + (i % 4) * 6}px`,
+                  animationDelay: `${(i * 0.11).toFixed(2)}s`,
+                  animationDuration: `${(2.4 + (i % 4) * 0.3).toFixed(2)}s`
+                }}
+              >
+                {leaf}
+              </div>
+            );
+          })}
+        </>
+      )}
+
+      {effect === 'blue' && (
+        <div className="ocean-wave-overlay">
+          <svg
+            viewBox="0 0 1440 280"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ width: '100%', height: 'auto', display: 'block' }}
+          >
+            <path
+              fill="rgba(56, 189, 248, 0.45)"
+              d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,160C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            />
+            <path
+              fill="rgba(2, 132, 199, 0.58)"
+              d="M0,160L48,170.7C96,181,192,203,288,197.3C384,192,480,160,576,149.3C672,139,768,149,864,165.3C960,181,1056,203,1152,197.3C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            />
+          </svg>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function App() {
+  const [activeThemeEffect, setActiveThemeEffect] = useState(null);
   const [data, setData] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('fitness-os'));
@@ -285,6 +388,7 @@ function App() {
   const handleSelectColorTheme = (themeKey) => {
     setColorTheme(themeKey);
     localStorage.setItem('fitness-color-theme', themeKey);
+    setActiveThemeEffect(themeKey);
     const th = themesList.find(t => t.key === themeKey);
     notify(`Đã chuyển theme: ${th ? th.icon + ' ' + th.name : themeKey}`);
   };
@@ -542,6 +646,8 @@ function App() {
 
   return (
     <div className={`app ${colorTheme === 'green' ? 'theme-green' : colorTheme === 'pink' ? 'theme-pink' : colorTheme === 'autumn' ? 'theme-autumn' : ''} ${dark ? 'dark' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`.trim()}>
+      <ThemeAnimationOverlay effect={activeThemeEffect} onDismiss={() => setActiveThemeEffect(null)} />
+
       <input
         type="file"
         ref={fileInputRef}
@@ -1075,10 +1181,10 @@ function Dashboard({
               <div className="today-progress-bar">
                 <div className="today-progress-header">
                   <span>Tiến độ buổi tập hôm nay ({completedCount}/{totalExercises} bài hoàn thành)</span>
-                  <b style={{ color: '#0284c7' }}>{workoutPercent}%</b>
+                  <b style={{ color: 'var(--primary)' }}>{workoutPercent}%</b>
                 </div>
                 <div className="bar">
-                  <i style={{ width: `${workoutPercent}%`, background: 'linear-gradient(90deg, #0284c7, #38bdf8)' }} />
+                  <i style={{ width: `${workoutPercent}%`, background: 'var(--primary-gradient)' }} />
                 </div>
               </div>
 
@@ -1101,7 +1207,7 @@ function Dashboard({
                               <span className="badge-muscle">{ex.muscle}</span>
                               <span>{ex.sets} hiệp × {ex.reps}</span>
                               <span>·</span>
-                              <strong style={{ color: '#0284c7' }}>{ex.weight} kg</strong>
+                              <strong style={{ color: 'var(--primary)' }}>{ex.weight} kg</strong>
                               {ex.note && <span style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>({ex.note})</span>}
                             </div>
                           </div>
@@ -1155,7 +1261,7 @@ function Dashboard({
                 <button
                   className="text-btn"
                   onClick={onOpenWorkout}
-                  style={{ fontSize: 13, fontWeight: 700, color: '#0284c7' }}
+                  style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary)' }}
                 >
                   Vào phòng tập (Bấm giờ nghỉ) <I.ArrowRight size={14} />
                 </button>
@@ -1221,7 +1327,7 @@ function Dashboard({
                       <div className="today-item-sub">
                         <span>🔥 {m.cal} kcal</span>
                         <span>·</span>
-                        <strong style={{ color: '#0284c7' }}>🥩 {m.protein}g Protein</strong>
+                        <strong style={{ color: 'var(--primary)' }}>🥩 {m.protein}g Protein</strong>
                         <span>·</span>
                         <span>💰 {money(m.cost)}</span>
                       </div>
@@ -1255,7 +1361,7 @@ function Dashboard({
             <button
               className="text-btn"
               onClick={onOpenRecipes}
-              style={{ fontSize: 13, fontWeight: 700, color: '#0284c7' }}
+              style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary)' }}
             >
               Khám phá món & Video nấu ăn <I.ArrowRight size={14} />
             </button>
@@ -1638,7 +1744,7 @@ function CalendarPage({ history, todayData, onUpdateDay, notify }) {
       <div className="calendar-card">
         <div className="calendar-nav-bar">
           <div className="cal-month-title">
-            <I.Calendar size={22} color="#0284c7" />
+            <I.Calendar size={22} style={{ color: "var(--primary)" }} />
             <span>{monthNames[currentMonth]} · {currentYear}</span>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
@@ -1696,7 +1802,7 @@ function CalendarPage({ history, todayData, onUpdateDay, notify }) {
                 </div>
 
                 {item?.status === 'workout' && item?.program && (
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#0284c7', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.program}
                   </div>
                 )}
@@ -1764,7 +1870,7 @@ function CalendarPage({ history, todayData, onUpdateDay, notify }) {
                     <div>
                       <b style={{ fontSize: 16, display: 'block' }}>🏋️ Buổi tập hôm đó</b>
                       <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                        Giáo trình tập: <strong style={{ color: '#0284c7' }}>{editingDay.program || 'Chưa chọn'}</strong>
+                        Giáo trình tập: <strong style={{ color: 'var(--primary)' }}>{editingDay.program || 'Chưa chọn'}</strong>
                       </span>
                     </div>
                     {editingDay.status === 'workout' && (
@@ -1792,7 +1898,7 @@ function CalendarPage({ history, todayData, onUpdateDay, notify }) {
                               <div>
                                 <b style={{ fontSize: 15 }}>{ex.name}</b>
                                 <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: 12.5, marginTop: 3 }}>
-                                  {ex.sets} sets × {ex.reps} · <strong style={{ color: '#0284c7' }}>{ex.weight} kg</strong>
+                                  {ex.sets} sets × {ex.reps} · <strong style={{ color: 'var(--primary)' }}>{ex.weight} kg</strong>
                                 </span>
                               </div>
                               <button
@@ -1874,7 +1980,7 @@ function CalendarPage({ history, todayData, onUpdateDay, notify }) {
                     <div>
                       <b style={{ fontSize: 16, display: 'block' }}>🥗 Các món đã ăn hôm đó</b>
                       <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                        Tổng cộng: <strong style={{ color: '#0284c7' }}>{editingDay.meals?.reduce((s, m) => s + (Number(m.cal) || 0), 0) || 0} kcal</strong> · <strong style={{ color: '#0284c7' }}>{editingDay.meals?.reduce((s, m) => s + (Number(m.protein) || 0), 0) || 0}g Protein</strong>
+                        Tổng cộng: <strong style={{ color: 'var(--primary)' }}>{editingDay.meals?.reduce((s, m) => s + (Number(m.cal) || 0), 0) || 0} kcal</strong> · <strong style={{ color: 'var(--primary)' }}>{editingDay.meals?.reduce((s, m) => s + (Number(m.protein) || 0), 0) || 0}g Protein</strong>
                       </span>
                     </div>
                   </div>
@@ -1888,7 +1994,7 @@ function CalendarPage({ history, todayData, onUpdateDay, notify }) {
                           <div>
                             <b style={{ fontSize: 15 }}>{m.name}: {m.food}</b>
                             <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: 12.5, marginTop: 3 }}>
-                              {m.cal} kcal · <strong style={{ color: '#0284c7' }}>{m.protein}g Protein</strong> · {money(m.cost || 0)}
+                              {m.cal} kcal · <strong style={{ color: 'var(--primary)' }}>{m.protein}g Protein</strong> · {money(m.cost || 0)}
                             </span>
                           </div>
                           <button
@@ -2177,7 +2283,7 @@ function Workout({ data, setData, notify }) {
                         onClick={() => toggleCheck(i)}
                         title={isDone ? 'Bỏ đánh dấu' : 'Đánh dấu hoàn thành'}
                       >
-                        {isDone ? <I.Check size={20} color="#0284c7" /> : <I.Circle size={20} />}
+                        {isDone ? <I.Check size={20} style={{ color: "var(--primary)" }} /> : <I.Circle size={20} />}
                       </button>
                       <button
                         className="action-icon-btn"
@@ -2664,7 +2770,7 @@ function RecipesPage({
                   <div style={{ flex: 1 }}>
                     <h3 style={{ fontSize: 16.5, fontWeight: 800, marginBottom: 4 }}>{recipe.name}</h3>
                     <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
-                      ⏱ {recipe.time} · {recipe.mealType} · <b style={{ color: '#0284c7' }}>{money(recipe.cost)}</b>
+                      ⏱ {recipe.time} · {recipe.mealType} · <b style={{ color: 'var(--primary)' }}>{money(recipe.cost)}</b>
                     </span>
                   </div>
                 </div>
@@ -2689,7 +2795,7 @@ function RecipesPage({
                   </div>
                   <div className="recipe-macros-item">
                     <span>Protein</span>
-                    <b style={{ color: '#0284c7' }}>{recipe.protein}g</b>
+                    <b style={{ color: 'var(--primary)' }}>{recipe.protein}g</b>
                   </div>
                   <div className="recipe-macros-item">
                     <span>Carbs</span>
@@ -2713,7 +2819,7 @@ function RecipesPage({
                   <button
                     className="btn-secondary"
                     onClick={() => onSaveToMyRecipes(recipe)}
-                    style={{ padding: '10px 8px', fontSize: 12.5, borderRadius: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, borderColor: '#0284c7', color: '#0284c7' }}
+                    style={{ padding: '10px 8px', fontSize: 12.5, borderRadius: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, borderColor: 'var(--primary)', color: 'var(--primary)' }}
                     title="Lưu món này vào danh sách Thực đơn của tôi"
                   >
                     <I.Bookmark size={14} /> Lưu vào Của tôi
@@ -2799,7 +2905,7 @@ function RecipesPage({
                   {recipe.image ? (
                     <div className="recipe-img-box">
                       <img src={recipe.image} alt={recipe.name} loading="lazy" />
-                      <span className="recipe-img-tag" style={{ background: '#0284c7' }}>
+                      <span className="recipe-img-tag" style={{ background: 'var(--primary)' }}>
                         ⭐ Món của tôi
                       </span>
                     </div>
@@ -2813,7 +2919,7 @@ function RecipesPage({
                     <div style={{ flex: 1 }}>
                       <h3 style={{ fontSize: 16.5, fontWeight: 800, marginBottom: 4 }}>{recipe.name}</h3>
                       <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
-                        ⏱ {recipe.time} · {recipe.mealType} · <b style={{ color: '#0284c7' }}>{money(recipe.cost)}</b>
+                        ⏱ {recipe.time} · {recipe.mealType} · <b style={{ color: 'var(--primary)' }}>{money(recipe.cost)}</b>
                       </span>
                     </div>
                   </div>
@@ -2836,7 +2942,7 @@ function RecipesPage({
                     </div>
                     <div className="recipe-macros-item">
                       <span>Protein</span>
-                      <b style={{ color: '#0284c7' }}>{recipe.protein}g</b>
+                      <b style={{ color: 'var(--primary)' }}>{recipe.protein}g</b>
                     </div>
                     <div className="recipe-macros-item">
                       <span>Carbs</span>
@@ -2907,7 +3013,7 @@ function RecipesPage({
             <div className="calculator-panel">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, borderBottom: '1px solid var(--border-subtle)', paddingBottom: 12 }}>
                 <div>
-                  <h3 style={{ margin: '0 0 4px', fontSize: 18, color: '#0284c7' }}>
+                  <h3 style={{ margin: '0 0 4px', fontSize: 18, color: 'var(--primary)' }}>
                     🧮 Trình Tạo Combo Bữa Ăn - Tự Động Tính Calo & Macro
                   </h3>
                   <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
@@ -3004,7 +3110,7 @@ function RecipesPage({
                           >
                             -
                           </button>
-                          <span style={{ minWidth: 20, textAlign: 'center', fontWeight: 800, color: qty > 0 ? '#0284c7' : 'inherit' }}>
+                          <span style={{ minWidth: 20, textAlign: 'center', fontWeight: 800, color: qty > 0 ? 'var(--primary)' : 'inherit' }}>
                             {qty}
                           </span>
                           <button
@@ -3030,11 +3136,11 @@ function RecipesPage({
                 marginBottom: 20
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
-                  <b style={{ fontSize: 14, color: '#0284c7' }}>
+                  <b style={{ fontSize: 14, color: 'var(--primary)' }}>
                     ⚡ KẾT QUẢ TÍNH TOÁN DINH DƯỠNG TỰ ĐỘNG ({comboTotals.itemsList.length} thành phần):
                   </b>
                   <span style={{ fontSize: 13, fontWeight: 800 }}>
-                    Ước tính chi phí: <b style={{ color: '#0284c7' }}>{money(comboTotals.cost)}</b>
+                    Ước tính chi phí: <b style={{ color: 'var(--primary)' }}>{money(comboTotals.cost)}</b>
                   </span>
                 </div>
 
@@ -3045,7 +3151,7 @@ function RecipesPage({
                   </div>
                   <div className="macro-chip">
                     <span className="macro-lbl">PROTEIN (ĐẠM)</span>
-                    <span className="macro-val" style={{ color: '#0284c7' }}>{comboTotals.protein}g</span>
+                    <span className="macro-val" style={{ color: 'var(--primary)' }}>{comboTotals.protein}g</span>
                   </div>
                   <div className="macro-chip">
                     <span className="macro-lbl">CARBS (TINH BỘT)</span>
@@ -3086,7 +3192,7 @@ function RecipesPage({
                       cost: comboTotals.cost
                     }, comboMealType);
                   }}
-                  style={{ borderColor: '#0284c7', color: '#0284c7' }}
+                  style={{ borderColor: 'var(--primary)', color: 'var(--primary)' }}
                 >
                   ⚡ Ăn ngay hôm nay (Nạp vào {comboMealType})
                 </button>
@@ -3112,14 +3218,14 @@ function RecipesPage({
                 <div className="combo-card" key={combo.id || idx}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
                     <div>
-                      <span style={{ fontSize: 11.5, fontWeight: 800, color: '#0284c7', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                      <span style={{ fontSize: 11.5, fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
                         🎯 {combo.target || 'Bữa ăn chuẩn Gym'}
                       </span>
                       <h3 style={{ margin: '4px 0 2px', fontSize: 17, fontWeight: 800 }}>
                         {combo.name}
                       </h3>
                       <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
-                        Bữa thích hợp: {combo.mealType || 'Trưa / Tối'} · Chi phí: <b style={{ color: '#0284c7' }}>{money(combo.cost || 0)}</b>
+                        Bữa thích hợp: {combo.mealType || 'Trưa / Tối'} · Chi phí: <b style={{ color: 'var(--primary)' }}>{money(combo.cost || 0)}</b>
                       </span>
                     </div>
                     {combo.id && combo.id.startsWith('combo-') && (
@@ -3160,7 +3266,7 @@ function RecipesPage({
                     </div>
                     <div className="recipe-macros-item">
                       <span>Protein</span>
-                      <b style={{ color: '#0284c7' }}>{combo.protein}g</b>
+                      <b style={{ color: 'var(--primary)' }}>{combo.protein}g</b>
                     </div>
                     <div className="recipe-macros-item">
                       <span>Carbs</span>
@@ -3268,7 +3374,7 @@ function RecipesPage({
                     </div>
                     <div className="macro-chip">
                       <span className="macro-lbl">PROTEIN</span>
-                      <span className="macro-val" style={{ color: '#0284c7' }}>{activeRecipe.protein}g</span>
+                      <span className="macro-val" style={{ color: 'var(--primary)' }}>{activeRecipe.protein}g</span>
                     </div>
                     <div className="macro-chip">
                       <span className="macro-lbl">CARBS</span>
@@ -3295,7 +3401,7 @@ function RecipesPage({
 
                   {/* Nạp vào bữa hôm nay */}
                   <div style={{ background: 'var(--primary-light)', padding: 18, borderRadius: 16, border: '1px solid var(--primary-border)' }}>
-                    <b style={{ display: 'block', marginBottom: 10, fontSize: 13.5, color: '#0284c7' }}>
+                    <b style={{ display: 'block', marginBottom: 10, fontSize: 13.5, color: 'var(--primary)' }}>
                       ➕ Nạp món này vào Nhật ký hôm nay:
                     </b>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -3366,7 +3472,7 @@ function RecipesPage({
                     onSaveToMyRecipes(activeRecipe);
                     setActiveRecipe(null);
                   }}
-                  style={{ borderColor: '#0284c7', color: '#0284c7' }}
+                  style={{ borderColor: 'var(--primary)', color: 'var(--primary)' }}
                 >
                   <I.Bookmark size={15} /> Lưu vào Thực đơn của tôi
                 </button>
@@ -3401,7 +3507,7 @@ function RecipesPage({
                   marginBottom: 20
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                    <b style={{ fontSize: 13.5, color: '#0284c7' }}>
+                    <b style={{ fontSize: 13.5, color: 'var(--primary)' }}>
                       🧮 Chọn nhanh nguyên liệu chuẩn (Máy sẽ tự động tính Calo, Protein & Giá):
                     </b>
                     <button
@@ -3435,9 +3541,9 @@ function RecipesPage({
                             padding: '6px 12px',
                             borderRadius: 12,
                             fontSize: 12,
-                            border: `1px solid ${qty > 0 ? '#0284c7' : 'var(--border-card)'}`,
+                            border: `1px solid ${qty > 0 ? 'var(--primary)' : 'var(--border-card)'}`,
                             background: qty > 0 ? 'var(--primary-light)' : 'var(--bg-card)',
-                            color: qty > 0 ? '#0284c7' : 'var(--text-main)',
+                            color: qty > 0 ? 'var(--primary)' : 'var(--text-main)',
                             cursor: 'pointer',
                             display: 'inline-flex',
                             alignItems: 'center',
@@ -3445,7 +3551,7 @@ function RecipesPage({
                           }}
                         >
                           <span>{ing.name} ({ing.unit})</span>
-                          {qty > 0 && <b style={{ background: '#0284c7', color: '#fff', borderRadius: 10, padding: '1px 6px', fontSize: 11 }}>x{qty}</b>}
+                          {qty > 0 && <b style={{ background: 'var(--primary)', color: '#fff', borderRadius: 10, padding: '1px 6px', fontSize: 11 }}>x{qty}</b>}
                         </button>
                       );
                     })}
@@ -3668,7 +3774,7 @@ function Nutrition({ data, consumed, protein, combos = [], onAddMeal, onDeleteMe
         <Card style={{ marginBottom: 24, padding: '20px 22px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
             <div>
-              <span className="eyebrow" style={{ color: '#0284c7' }}>GỢI Ý DINH DƯỠNG NHANH</span>
+              <span className="eyebrow" style={{ color: 'var(--primary)' }}>GỢI Ý DINH DƯỠNG NHANH</span>
               <h3 style={{ margin: '2px 0 0', fontSize: 17, fontWeight: 800 }}>🍱 Nạp Nhanh Combo Bữa Ăn (1 Chạm)</h3>
             </div>
             <button className="btn-secondary" onClick={onOpenRecipes} style={{ fontSize: 12.5, padding: '7px 14px' }}>
@@ -3701,7 +3807,7 @@ function Nutrition({ data, consumed, protein, combos = [], onAddMeal, onDeleteMe
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <b style={{ fontSize: 13.5, color: 'var(--text-main)' }}>{combo.name}</b>
-                    <span style={{ fontSize: 11, background: 'var(--primary-light)', color: '#0284c7', padding: '2px 8px', borderRadius: 8, fontWeight: 700 }}>
+                    <span style={{ fontSize: 11, background: 'var(--primary-light)', color: 'var(--primary)', padding: '2px 8px', borderRadius: 8, fontWeight: 700 }}>
                       {combo.mealType || 'Trưa'}
                     </span>
                   </div>
@@ -3712,7 +3818,7 @@ function Nutrition({ data, consumed, protein, combos = [], onAddMeal, onDeleteMe
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: 4 }}>
                     <span style={{ fontSize: 12, fontWeight: 800 }}>
-                      🔥 {combo.cal} kcal · <b style={{ color: '#0284c7' }}>{combo.protein}g đạm</b>
+                      🔥 {combo.cal} kcal · <b style={{ color: 'var(--primary)' }}>{combo.protein}g đạm</b>
                     </span>
                     <button
                       className="primary"
@@ -3759,7 +3865,7 @@ function Nutrition({ data, consumed, protein, combos = [], onAddMeal, onDeleteMe
                 <p>Chi phí: {money(m.cost)}</p>
               </div>
               <span>{m.cal} kcal</span>
-              <span style={{ fontWeight: 700, color: '#0284c7' }}>{m.protein}g Protein</span>
+              <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{m.protein}g Protein</span>
               <div style={{ textAlign: 'right' }}>
                 <button
                   className="action-icon-btn"
@@ -4465,7 +4571,7 @@ create policy "Allow all operations for anon" on public.fitness_data
       <div className="db-info-card" style={{ marginTop: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <I.Database size={24} color="#0284c7" />
+            <I.Database size={24} style={{ color: "var(--primary)" }} />
             <div>
               <h3 style={{ margin: 0, fontSize: 17 }}>Cơ sở dữ liệu Database trên máy (Local Database Server)</h3>
               <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Lưu vào file `fitness_database.json` trên máy tính (Port 3001)</span>

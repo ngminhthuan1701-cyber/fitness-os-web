@@ -3,70 +3,69 @@
 :root {
   --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   
-  /* Bright Sky Blue & Pastel Palette (Mặc định) */
+  /* Bright Sky Blue & Pastel Palette (Mặc định - Giữ nguyên tông xanh biển) */
   --primary: #0284c7;           /* Sky Blue 600 */
   --primary-hover: #0369a1;     /* Sky Blue 700 */
+  --primary-gradient: linear-gradient(135deg, #0284c7, #38bdf8);
   --primary-light: #e0f2fe;     /* Pastel Blue 100 */
   --primary-border: #bae6fd;    /* Pastel Blue 200 */
-  --primary-glow: rgba(2, 132, 199, 0.2);
+  --primary-glow: rgba(2, 132, 199, 0.22);
   
-  /* Light Theme */
-  --bg-page: #f0f6fc;          /* Mềm mại, tươi sáng, êm mắt */
+  /* Light Theme (Xanh biển giữ nguyên) */
+  --bg-page: #f0f6fc;          /* Xanh biển pastel giữ nguyên */
   --bg-card: #ffffff;
   --bg-subtle: #f8fafc;
-  --text-main: #0f172a;        /* Xanh than đậm, tương phản cao, cực nét */
-  --text-muted: #475569;       /* Slate 600, rõ ràng không mờ */
+  --text-main: #0f172a;        /* Tương phản cao, cực nét */
+  --text-muted: #475569;       /* Slate 600 */
   --text-dim: #94a3b8;
   --border-card: #e2e8f0;
   --border-subtle: #edf2f7;
+  
+  /* Sidebar sáng Pastel mềm mại - không bị đậm đen */
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e2e8f0;
+  --sidebar-text: #334155;
+  --sidebar-hover-bg: #f0f7fe;
+  
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
   --shadow-md: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-  --shadow-lg: 0 20px 45px -8px rgba(15, 23, 42, 0.2), 0 6px 16px -2px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 20px 45px -8px rgba(15, 23, 42, 0.16), 0 6px 16px -2px rgba(15, 23, 42, 0.06);
 }
 
-/* ---------------- THEME XANH LÁ MÁT MẺ (EMERALD MINT PASTEL) ---------------- */
+/* ---------------- THEME XANH LÁ MÁT MẺ (EMERALD MINT PASTEL NHẸ) ---------------- */
 .app.theme-green {
   --primary: #10b981;          /* Emerald 500 */
   --primary-hover: #059669;    /* Emerald 600 */
+  --primary-gradient: linear-gradient(135deg, #059669, #10b981);
   --primary-light: #d1fae5;    /* Pastel Mint 100 */
   --primary-border: #a7f3d0;   /* Pastel Mint 200 */
   --primary-glow: rgba(16, 185, 129, 0.22);
   
-  --bg-page: #f0fdf4;         /* Xanh lá pastel rất dịu, êm mát mắt */
+  --bg-page: #f6fbf7;         /* Nền xanh lá pastel rất nhạt, êm dịu mắt */
   --bg-card: #ffffff;
-  --bg-subtle: #f4fbf7;
+  --bg-subtle: #edf7f0;
   --text-main: #064e3b;       /* Xanh rêu đậm, nét rõ, êm dịu */
   --text-muted: #374151;
   --text-dim: #9ca3af;
   --border-card: #d1fae5;
   --border-subtle: #e6f7ee;
-  --shadow-sm: 0 1px 3px rgba(6, 78, 59, 0.06);
-  --shadow-md: 0 4px 20px -2px rgba(6, 78, 59, 0.08), 0 2px 6px -1px rgba(6, 78, 59, 0.04);
+  
+  --sidebar-bg: #f4fbf6;      /* Thanh menu sáng pastel dịu mát, không bị đen đậm */
+  --sidebar-border: #d1fae5;
+  --sidebar-text: #1f2937;
+  --sidebar-hover-bg: #e5f7eb;
 }
 
-.app.theme-green .sidebar {
-  background: #052418;
-  border-right-color: #0d402c;
-}
 .app.theme-green .logo {
   background: linear-gradient(135deg, #34d399, #059669);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
 }
 .app.theme-green .brand span {
-  color: #6ee7b7;
-}
-.app.theme-green .sidebar button:hover {
-  background: #0c3826;
-  color: #34d399;
-}
-.app.theme-green .sidebar button.active {
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.35), rgba(52, 211, 153, 0.2));
-  color: #34d399;
-  border-color: rgba(52, 211, 153, 0.45);
+  color: #059669;
 }
 .app.theme-green .primary {
   background: linear-gradient(135deg, #059669, #10b981);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.32);
 }
 .app.theme-green .primary:hover {
   background: linear-gradient(135deg, #047857, #059669);
@@ -74,11 +73,11 @@
 .app.theme-green .sub-nav-tab.active {
   background: linear-gradient(135deg, #059669, #10b981);
   border-color: #059669;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.32);
 }
 .app.theme-green .avatar {
   background: linear-gradient(135deg, #059669, #34d399);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.32);
 }
 
 /* Green Dark Theme */
@@ -91,54 +90,48 @@
   --text-dim: #6b7280;
   --border-card: #153b2d;
   --border-subtle: #1c4838;
+  --sidebar-bg: #071f16;
+  --sidebar-border: #0f3d2b;
+  --sidebar-text: #e5e7eb;
   --primary-light: #103829;
   --primary-border: #165b40;
   --primary-glow: rgba(52, 211, 153, 0.25);
 }
 
-/* ---------------- THEME HOA ANH ĐÀO (SAKURA PINK PASTEL) ---------------- */
+/* ---------------- THEME HOA ANH ĐÀO (SAKURA PINK PASTEL NHẸ) ---------------- */
 .app.theme-pink {
   --primary: #f43f5e;          /* Sakura Rose 500 */
   --primary-hover: #e11d48;    /* Rose 600 */
+  --primary-gradient: linear-gradient(135deg, #e11d48, #f43f5e);
   --primary-light: #ffe4e6;    /* Pastel Rose 100 */
   --primary-border: #fecdd3;   /* Pastel Rose 200 */
   --primary-glow: rgba(244, 63, 94, 0.22);
   
-  --bg-page: #fff5f7;         /* Hồng anh đào pastel rất mềm dịu mắt */
+  --bg-page: #fdf6f7;         /* Nền hồng phấn hoa anh đào cực kỳ nhạt, thanh tao */
   --bg-card: #ffffff;
-  --bg-subtle: #fff1f3;
+  --bg-subtle: #faedf0;
   --text-main: #4c0519;       /* Đỏ mận sẫm cực kỳ rõ ràng, nét căng */
   --text-muted: #881337;
   --text-dim: #9f1239;
   --border-card: #fecdd3;
   --border-subtle: #ffe4e6;
-  --shadow-sm: 0 1px 3px rgba(136, 19, 55, 0.06);
-  --shadow-md: 0 4px 20px -2px rgba(136, 19, 55, 0.08), 0 2px 6px -1px rgba(136, 19, 55, 0.04);
+  
+  --sidebar-bg: #fdf3f5;      /* Thanh menu hồng pastel sáng mềm, không bị đen đậm */
+  --sidebar-border: #fecdd3;
+  --sidebar-text: #374151;
+  --sidebar-hover-bg: #fbe6eb;
 }
 
-.app.theme-pink .sidebar {
-  background: #2b0b14;
-  border-right-color: #4c1122;
-}
 .app.theme-pink .logo {
   background: linear-gradient(135deg, #fb7185, #f43f5e);
-  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.4);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
 }
 .app.theme-pink .brand span {
-  color: #fbcfe8;
-}
-.app.theme-pink .sidebar button:hover {
-  background: #441422;
-  color: #fbcfe8;
-}
-.app.theme-pink .sidebar button.active {
-  background: linear-gradient(135deg, rgba(225, 29, 72, 0.35), rgba(251, 113, 133, 0.2));
-  color: #fda4af;
-  border-color: rgba(251, 113, 133, 0.45);
+  color: #e11d48;
 }
 .app.theme-pink .primary {
   background: linear-gradient(135deg, #e11d48, #f43f5e);
-  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.32);
 }
 .app.theme-pink .primary:hover {
   background: linear-gradient(135deg, #be123c, #e11d48);
@@ -146,11 +139,11 @@
 .app.theme-pink .sub-nav-tab.active {
   background: linear-gradient(135deg, #e11d48, #f43f5e);
   border-color: #e11d48;
-  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.32);
 }
 .app.theme-pink .avatar {
   background: linear-gradient(135deg, #e11d48, #fb7185);
-  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.32);
 }
 
 /* Pink Dark Theme */
@@ -163,54 +156,48 @@
   --text-dim: #f43f5e;
   --border-card: #4c0519;
   --border-subtle: #3a0815;
+  --sidebar-bg: #200810;
+  --sidebar-border: #3d0f1e;
+  --sidebar-text: #fecdd3;
   --primary-light: #380e1b;
   --primary-border: #641128;
   --primary-glow: rgba(251, 113, 133, 0.25);
 }
 
-/* ---------------- THEME MÙA THU ẤM ÁP (AUTUMN AMBER) ---------------- */
+/* ---------------- THEME MÙA THU ẤM ÁP (AUTUMN AMBER NHẸ) ---------------- */
 .app.theme-autumn {
   --primary: #d97706;          /* Autumn Amber 600 */
   --primary-hover: #b45309;    /* Amber 700 */
+  --primary-gradient: linear-gradient(135deg, #b45309, #d97706);
   --primary-light: #fef3c7;    /* Pastel Amber 100 */
   --primary-border: #fde68a;   /* Pastel Amber 200 */
   --primary-glow: rgba(217, 119, 6, 0.22);
   
-  --bg-page: #fffdf5;         /* Nền mật ong mùa thu ấm áp cực êm mắt */
+  --bg-page: #fdfbf7;         /* Nền mật ong mùa thu cực nhạt, ấm áp dịu mắt */
   --bg-card: #ffffff;
-  --bg-subtle: #fefcf3;
+  --bg-subtle: #f9f5ec;
   --text-main: #451a03;       /* Nâu hổ phách đậm rất nét, không bị chói */
   --text-muted: #78350f;
   --text-dim: #92400e;
   --border-card: #fde68a;
   --border-subtle: #fef3c7;
-  --shadow-sm: 0 1px 3px rgba(120, 53, 15, 0.06);
-  --shadow-md: 0 4px 20px -2px rgba(120, 53, 15, 0.08), 0 2px 6px -1px rgba(120, 53, 15, 0.04);
+  
+  --sidebar-bg: #fbf6ec;      /* Thanh menu ấm áp sáng pastel, không bị đen đậm */
+  --sidebar-border: #fde68a;
+  --sidebar-text: #374151;
+  --sidebar-hover-bg: #f6ecdb;
 }
 
-.app.theme-autumn .sidebar {
-  background: #241407;
-  border-right-color: #3d230e;
-}
 .app.theme-autumn .logo {
   background: linear-gradient(135deg, #f59e0b, #d97706);
-  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
 }
 .app.theme-autumn .brand span {
-  color: #fde68a;
-}
-.app.theme-autumn .sidebar button:hover {
-  background: #3b220e;
-  color: #fde68a;
-}
-.app.theme-autumn .sidebar button.active {
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.35), rgba(245, 158, 11, 0.2));
-  color: #fde68a;
-  border-color: rgba(245, 158, 11, 0.45);
+  color: #b45309;
 }
 .app.theme-autumn .primary {
   background: linear-gradient(135deg, #b45309, #d97706);
-  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.32);
 }
 .app.theme-autumn .primary:hover {
   background: linear-gradient(135deg, #92400e, #b45309);
@@ -218,11 +205,11 @@
 .app.theme-autumn .sub-nav-tab.active {
   background: linear-gradient(135deg, #b45309, #d97706);
   border-color: #b45309;
-  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.32);
 }
 .app.theme-autumn .avatar {
   background: linear-gradient(135deg, #b45309, #f59e0b);
-  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.32);
 }
 
 /* Autumn Dark Theme */
@@ -235,6 +222,9 @@
   --text-dim: #d97706;
   --border-card: #451a03;
   --border-subtle: #331402;
+  --sidebar-bg: #1e0e04;
+  --sidebar-border: #3b1b07;
+  --sidebar-text: #fef3c7;
   --primary-light: #2e1608;
   --primary-border: #522509;
   --primary-glow: rgba(245, 158, 11, 0.25);
@@ -250,6 +240,10 @@
   --text-dim: #64748b;
   --border-card: #1e293b;
   --border-subtle: #24344d;
+  --sidebar-bg: #0c1427;
+  --sidebar-border: #1e293b;
+  --sidebar-text: #f8fafc;
+  --sidebar-hover-bg: #172440;
   --primary-light: #172a45;
   --primary-border: #1e3a5f;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -287,18 +281,19 @@ html, body {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* ---------------- SIDEBAR ---------------- */
+/* ---------------- SIDEBAR PASTEL NHẸ NHÀNG (KHÔNG BỊ ĐẬM ĐEN) ---------------- */
 .sidebar {
   width: 270px;
-  background: #0b1329;
-  border-right: 1px solid #1a2744;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
   padding: 24px 18px;
   display: flex;
   flex-direction: column;
   position: fixed;
   inset: 0 auto 0 0;
   z-index: 25;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, border-color 0.25s ease;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.03);
 }
 
 .brand {
@@ -313,44 +308,45 @@ html, body {
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
   display: grid;
   place-items: center;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-card);
   transition: all 0.2s ease;
 }
 
 .sidebar-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary-border);
 }
 
 .logo {
   width: 42px;
   height: 42px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  background: var(--primary-gradient, linear-gradient(135deg, #38bdf8, #0284c7));
   color: #fff;
   display: grid;
   place-items: center;
   font-weight: 900;
   font-size: 20px;
-  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 14px var(--primary-glow);
 }
 
 .brand b {
   display: block;
   font-size: 16px;
-  color: #f8fafc;
+  color: var(--text-main);
   letter-spacing: -0.3px;
 }
 
 .brand span {
   font-size: 10.5px;
-  color: #7dd3fc;
-  font-weight: 700;
+  color: var(--primary);
+  font-weight: 800;
   letter-spacing: 1.2px;
 }
 
@@ -368,28 +364,30 @@ button {
 
 .sidebar button {
   background: transparent;
-  color: #94a3b8;
-  padding: 13px 16px;
+  color: var(--sidebar-text);
+  padding: 12px 16px;
   border-radius: 14px;
   display: flex;
   gap: 14px;
   align-items: center;
   text-align: left;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  transition: all 0.2s ease;
 }
 
 .sidebar button:hover {
-  background: #162444;
-  color: #38bdf8;
+  background: var(--sidebar-hover-bg, var(--primary-light));
+  color: var(--primary);
   transform: translateX(4px);
 }
 
 .sidebar button.active {
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(56, 189, 248, 0.15));
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
   font-weight: 800;
+  box-shadow: 0 2px 8px var(--primary-glow);
 }
 
 .sidebar-bottom {
@@ -397,7 +395,143 @@ button {
   display: grid;
   gap: 8px;
   padding-top: 18px;
-  border-top: 1px solid #1a2744;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ---------------- HIỆU ỨNG ĐỘNG CHUYỂN TÔNG (THEME ANIMATIONS) ---------------- */
+.theme-effect-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99999;
+  overflow: hidden;
+  animation: themeFadeOut 4.2s forwards ease-in-out;
+}
+
+@keyframes themeFadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+/* 1. Hoa anh đào rơi */
+.sakura-petal {
+  position: absolute;
+  top: -40px;
+  border-radius: 12px 1px 12px 1px;
+  background: linear-gradient(135deg, #fbcfe8, #f43f5e);
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.35);
+  animation: sakuraFall linear forwards;
+}
+
+@keyframes sakuraFall {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(0.7);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(105vh) rotate(360deg) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* 2. Lá vàng mùa thu rơi */
+.autumn-leaf-item {
+  position: absolute;
+  top: -50px;
+  animation: autumnFall ease-in-out forwards;
+}
+
+@keyframes autumnFall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(50vh) translateX(35px) rotate(160deg);
+  }
+  100% {
+    transform: translateY(105vh) translateX(-35px) rotate(340deg);
+    opacity: 0;
+  }
+}
+
+/* 3. Gió thổi lá xanh bay */
+.green-wind-leaf-item {
+  position: absolute;
+  left: -50px;
+  animation: windFly ease-out forwards;
+}
+
+@keyframes windFly {
+  0% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(105vw) translateY(80px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* 4. Sóng biển dạt dào */
+.ocean-wave-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  animation: oceanSurge 3.8s ease-in-out forwards;
+}
+
+@keyframes oceanSurge {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  25% {
+    transform: translateY(20px);
+    opacity: 0.85;
+  }
+  65% {
+    transform: translateY(0);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.sidebar button:hover {
+  background: var(--sidebar-hover-bg, var(--primary-light));
+  color: var(--primary);
+  transform: translateX(4px);
+}
+
+.sidebar button.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  font-weight: 800;
+  box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  display: grid;
+  gap: 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-card);
 }
 
 /* ---------------- SIDEBAR COLLAPSED / FULL SCREEN MODE ---------------- */
@@ -484,11 +618,11 @@ button {
   border-radius: 14px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  background: var(--primary-gradient, linear-gradient(135deg, #0284c7, #38bdf8));
   color: #fff;
   font-weight: 900;
   font-size: 18px;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 4px 14px var(--primary-glow);
 }
 
 /* ---------------- CARDS & BLOCKS ---------------- */
@@ -551,7 +685,7 @@ button {
 
 .positive {
   font-size: 13px;
-  color: #0284c7;
+  color: var(--primary);
   font-weight: 700;
 }
 
@@ -571,7 +705,7 @@ button {
 
 /* ---------------- HERO BANNERS ---------------- */
 .insight, .workout-hero, .recovery-score {
-  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-subtle) 100%);
   border: 1px solid var(--primary-border);
   border-radius: 22px;
   padding: 26px 32px;
@@ -591,12 +725,12 @@ button {
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  background: var(--primary-gradient, linear-gradient(135deg, #0284c7, #38bdf8));
   color: #fff;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4);
+  box-shadow: 0 6px 16px var(--primary-glow);
 }
 
 .insight b, .workout-hero h2, .recovery-score h2 {
@@ -633,7 +767,7 @@ button {
 
 /* ---------------- BUTTONS ---------------- */
 .primary {
-  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  background: var(--primary-gradient, linear-gradient(135deg, #0284c7, #0ea5e9));
   color: #ffffff;
   border-radius: 14px;
   padding: 12px 22px;
@@ -642,12 +776,12 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+  box-shadow: 0 4px 14px var(--primary-glow);
 }
 
 .primary:hover {
-  background: linear-gradient(135deg, #0369a1, #0284c7);
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+  background: var(--primary-hover);
+  box-shadow: 0 6px 20px var(--primary-glow);
   transform: translateY(-2px);
 }
 
@@ -732,7 +866,7 @@ button {
 .bar i {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #38bdf8, #0284c7);
+  background: var(--primary-gradient);
   border-radius: 20px;
   transition: width 0.4s ease;
 }
@@ -756,17 +890,17 @@ button {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  background: var(--primary-gradient);
   color: #fff;
   font-weight: 900;
   font-size: 16px;
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 4px 12px var(--primary-glow);
 }
 
 .week .today {
-  background: #0f172a;
-  color: #38bdf8;
-  border: 2px solid #38bdf8;
+  background: var(--bg-card);
+  color: var(--primary);
+  border: 2px solid var(--primary);
 }
 
 .dark .week .today {
@@ -831,9 +965,9 @@ button {
 }
 
 .toggle-switch button.active {
-  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  background: var(--primary-gradient);
   color: #fff;
-  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 3px 10px var(--primary-glow);
 }
 
 .program-select {
@@ -998,7 +1132,7 @@ button {
 }
 
 .progress-bar-fill {
-  background: linear-gradient(90deg, #38bdf8, #0284c7);
+  background: var(--primary-gradient);
   height: 100%;
   border-radius: 12px;
   transition: width 0.4s ease;
@@ -1068,10 +1202,10 @@ button {
 }
 
 .sub-nav-tab.active {
-  background: linear-gradient(135deg, #0284c7, #38bdf8);
-  border-color: #0284c7;
+  background: var(--primary-gradient, linear-gradient(135deg, #0284c7, #38bdf8));
+  border-color: var(--primary);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 4px 14px var(--primary-glow);
 }
 
 /* Khung ảnh món ăn thật sắc nét */
@@ -1424,12 +1558,12 @@ button {
   width: 130px;
   height: 130px;
   border-radius: 50%;
-  border: 11px solid #0284c7;
+  border: 11px solid var(--primary);
   display: grid;
   place-items: center;
   align-content: center;
   flex: 0 0 auto;
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.28);
+  box-shadow: 0 6px 20px var(--primary-glow);
 }
 
 .score-ring b {
@@ -1448,8 +1582,8 @@ button {
 .chart {
   height: 260px;
   margin-top: 20px;
-  color: #0284c7;
-  background: linear-gradient(180deg, rgba(2, 132, 199, 0.12), transparent);
+  color: var(--primary);
+  background: linear-gradient(180deg, var(--primary-glow), transparent);
   border-radius: 18px;
   padding: 12px;
 }
@@ -1562,9 +1696,9 @@ button {
 
 .msg.user {
   margin-left: auto;
-  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  background: var(--primary-gradient);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
+  box-shadow: 0 4px 14px var(--primary-glow);
 }
 
 .suggestions {
@@ -1666,7 +1800,7 @@ button {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #38bdf8;
+  background: var(--primary);
   animation: blink 1.4s infinite ease-in-out both;
 }
 
@@ -1750,13 +1884,13 @@ button {
   position: fixed;
   right: 32px;
   bottom: 32px;
-  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  background: var(--primary-gradient);
   color: #ffffff;
   padding: 16px 24px;
   border-radius: 16px;
   font-size: 14px;
   font-weight: 800;
-  box-shadow: 0 14px 34px rgba(2, 132, 199, 0.45);
+  box-shadow: 0 14px 34px var(--primary-glow);
   z-index: 120;
   display: flex;
   align-items: center;
@@ -2048,7 +2182,7 @@ button {
 }
 
 .cal-day-cell.selected {
-  border: 2px solid #0284c7;
+  border: 2px solid var(--primary);
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
@@ -2080,15 +2214,15 @@ button {
 }
 
 .badge-workout {
-  background: #e0f2fe;
-  color: #0284c7;
-  border: 1px solid #bae6fd;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
 }
 
 .dark .badge-workout {
-  background: #162b45;
-  color: #38bdf8;
-  border-color: #1e3f66;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary-border);
 }
 
 .badge-rest {
@@ -2315,8 +2449,8 @@ button {
 
 .today-item.is-done {
   opacity: 0.65;
-  background: rgba(2, 132, 199, 0.04);
-  border-color: rgba(2, 132, 199, 0.2);
+  background: var(--primary-light);
+  border-color: var(--primary-border);
 }
 
 .today-item.is-done .today-item-name {
@@ -2418,10 +2552,10 @@ button {
 }
 
 .check-circle-btn.checked {
-  background: linear-gradient(135deg, #0284c7, #38bdf8);
-  border-color: #0284c7;
+  background: var(--primary-gradient);
+  border-color: var(--primary);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 4px 12px var(--primary-glow);
 }
 
 .today-card-foot {
