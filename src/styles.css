@@ -2809,3 +2809,900 @@ button {
     justify-content: center;
   }
 }
+
+/* ==========================================================================
+   TAB MÔ HÌNH GIẢI PHẪU CƠ BẮP 3D & THƯ VIỆN BÀI TẬP (ANATOMY 3D PRO)
+   ========================================================================== */
+
+.anatomy-container {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding-bottom: 60px;
+}
+
+.anatomy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.anatomy-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 900;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  letter-spacing: 0.8px;
+  border: 1px solid var(--primary-border);
+}
+
+.anatomy-header-text h1 {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-main);
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+}
+
+.anatomy-header-text p {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  margin: 0;
+  max-width: 780px;
+  line-height: 1.55;
+}
+
+.anatomy-view-toggles {
+  display: flex;
+  gap: 10px;
+  background: var(--bg-card);
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.view-btn:hover {
+  color: var(--primary);
+  background: var(--bg-subtle);
+}
+
+.view-btn.active {
+  background: var(--primary-gradient);
+  color: #ffffff;
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+/* THANH CHIP CHỌN NHANH NHÓM CƠ */
+.anatomy-muscle-chips {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+  scrollbar-width: thin;
+}
+
+.muscle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  color: var(--text-main);
+  font-size: 13.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.muscle-chip .chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: all 0.2s ease;
+}
+
+.muscle-chip .chip-count {
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+}
+
+.muscle-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.muscle-chip.active {
+  background: var(--primary-light);
+  border-color: var(--primary-border);
+  color: var(--primary);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.muscle-chip.active .chip-dot {
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+}
+
+.muscle-chip.active .chip-count {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+/* KHÔNG GIAN BỐ CỤC CHÍNH 2 CỘT */
+.anatomy-main-layout {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .anatomy-main-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CỘT 1: KHUNG MÔ HÌNH 3D BỰ */
+.anatomy-model-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 26px;
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 90px;
+}
+
+.model-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.model-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-main);
+  background: var(--bg-subtle);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-card);
+}
+
+.scanner-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: blinkIndicator 1.8s infinite;
+}
+
+@keyframes blinkIndicator {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.model-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* SÂN KHẤU 3D INTERACTIVE */
+.anatomy-stage {
+  position: relative;
+  width: 100%;
+  min-height: 620px;
+  height: 640px;
+  border-radius: 22px;
+  background: radial-gradient(circle at center, var(--bg-subtle) 0%, var(--bg-card) 75%);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dark .anatomy-stage {
+  background: radial-gradient(circle at center, #172033 0%, #0b1120 85%);
+  border-color: #1e293b;
+}
+
+.stage-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+.scanner-ring {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  border: 1px dashed rgba(14, 165, 233, 0.2);
+  pointer-events: none;
+  animation: rotateRing 25s linear infinite;
+}
+
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* SVG MÔ HÌNH CƠ BẮP */
+.human-body-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 590px;
+  z-index: 5;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.08));
+}
+
+.muscle-clickable {
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.muscle-clickable path,
+.muscle-clickable rect,
+.muscle-clickable ellipse {
+  transition: fill 0.25s ease, stroke 0.25s ease, stroke-width 0.25s ease, filter 0.25s ease;
+}
+
+.muscle-clickable:hover path,
+.muscle-clickable:hover rect,
+.muscle-clickable:hover ellipse {
+  filter: drop-shadow(0 0 10px var(--primary));
+  opacity: 0.95;
+}
+
+.muscle-clickable.selected path,
+.muscle-clickable.selected rect,
+.muscle-clickable.selected ellipse {
+  filter: drop-shadow(0 0 14px var(--primary));
+}
+
+.stage-hud-info {
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border-card);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+
+.dark .stage-hud-info {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: #334155;
+}
+
+.hud-target-label {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--text-muted);
+}
+
+.hud-target-name {
+  color: var(--primary);
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.hud-target-latin {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* CỘT 2: CHI TIẾT NHÓM CƠ & BÀI TẬP */
+.anatomy-details-card {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.muscle-overview-banner {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 22px;
+  padding: 24px 28px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.muscle-overview-banner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: var(--primary-gradient);
+}
+
+.muscle-banner-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.muscle-latin-badge {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 4px;
+}
+
+.muscle-banner-head h2 {
+  font-size: 24px;
+  font-weight: 900;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.muscle-exercise-counter {
+  text-align: right;
+  background: var(--primary-light);
+  padding: 6px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--primary-border);
+}
+
+.muscle-exercise-counter b {
+  display: block;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.muscle-exercise-counter span {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.muscle-description {
+  color: var(--text-main);
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+
+.sub-muscles-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sub-tag-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.sub-muscle-pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 10px;
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  border: 1px solid var(--border-card);
+}
+
+/* BỘ LỌC TÌM KIẾM BÀI TẬP */
+.exercise-filter-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.exercise-filter-box .search-icon {
+  position: absolute;
+  left: 18px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.exercise-filter-box input {
+  width: 100%;
+  padding: 14px 44px 14px 48px;
+  border-radius: 16px;
+  border: 1px solid var(--border-card);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.exercise-filter-box input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.exercise-filter-box .clear-btn {
+  position: absolute;
+  right: 14px;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+}
+
+/* DANH SÁCH BÀI TẬP 3D */
+.exercises-catalog {
+  display: grid;
+  gap: 22px;
+}
+
+.exercise-card-3d {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: all 0.25s ease;
+}
+
+.exercise-card-3d:hover {
+  border-color: var(--primary-border);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.exercise-media-header {
+  position: relative;
+  height: 240px;
+  width: 100%;
+  background: #0f172a;
+  overflow: hidden;
+}
+
+.exercise-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.exercise-card-3d:hover .exercise-thumb {
+  transform: scale(1.04);
+}
+
+.exercise-media-overlay {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+
+.badge-equipment {
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.badge-level {
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.quick-video-play-btn {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+  z-index: 3;
+}
+
+.quick-video-play-btn:hover {
+  transform: scale(1.12);
+  background: var(--primary-hover);
+}
+
+/* THÂN BÀI TẬP */
+.exercise-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.exercise-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.exercise-title-row h3 {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 3px;
+}
+
+.exercise-vn-name {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.exercise-stats-box {
+  text-align: right;
+  background: var(--bg-subtle);
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-card);
+  flex-shrink: 0;
+}
+
+.exercise-stats-box b {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.exercise-stats-box span {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.exercise-target-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  padding: 6px 12px;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.exercise-steps-accordion {
+  background: var(--bg-subtle);
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+}
+
+.steps-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.steps-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.exercise-cues-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.cue-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cue-box.tip {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.dark .cue-box.tip {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.25);
+}
+
+.cue-box.warning {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.dark .cue-box.warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.exercise-action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-watch-video {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 14px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-card);
+  color: var(--text-main);
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-watch-video:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary-border);
+}
+
+.btn-add-workout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 14px;
+  background: var(--primary-gradient);
+  border: none;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+.btn-add-workout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px var(--primary-glow);
+}
+
+.empty-exercise-box {
+  background: var(--bg-card);
+  border: 2px dashed var(--border-card);
+  border-radius: 22px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ================= MODAL XEM VIDEO KỸ THUẬT HD ================= */
+.modal-video-hd {
+  max-width: 920px !important;
+  width: 95vw !important;
+  padding: 24px !important;
+  border-radius: 26px !important;
+}
+
+.modal-video-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.video-badge {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 4px 10px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.video-head-titles h2 {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.video-vn-sub {
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+
+.close-video-modal {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-card);
+  color: var(--text-main);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.close-video-modal:hover {
+  color: #ef4444;
+}
+
+.video-player-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* Tỉ lệ 16:9 chuẩn YouTube */
+  height: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000000;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.exercise-video-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-quick-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-subtle);
+  padding: 16px 20px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--text-main);
+}
+
+.modal-video-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* RESPONSIVE CHO ĐIỆN THOẠI */
+@media (max-width: 768px) {
+  .anatomy-header-text h1 {
+    font-size: 21px;
+  }
+  .anatomy-view-toggles {
+    width: 100%;
+  }
+  .view-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .anatomy-stage {
+    min-height: 480px;
+    height: 500px;
+  }
+  .human-body-svg {
+    max-height: 460px;
+  }
+  .exercise-media-header {
+    height: 190px;
+  }
+  .modal-video-hd {
+    padding: 18px !important;
+  }
+  .exercise-action-buttons {
+    flex-direction: column;
+  }
+  .exercise-action-buttons button {
+    width: 100%;
+    justify-content: center;
+  }
+}

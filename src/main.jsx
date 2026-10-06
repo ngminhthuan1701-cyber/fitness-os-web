@@ -6,6 +6,7 @@ import { askGeminiCoach } from './gemini.js';
 import { defaultRecipes, defaultCombos, standardIngredients } from './recipesData.js';
 import { workoutPrograms, muscleGroups } from './workoutData.js';
 import { SUPABASE_URL, DEFAULT_SUPABASE_KEY, saveToSupabase, loadFromSupabase, testConnection } from './supabase.js';
+import Anatomy3DTab from './Anatomy3DTab.jsx';
 
 // Dữ liệu mẫu lịch sử các ngày trong tháng 10/2026
 const initialHistory = {
@@ -879,10 +880,29 @@ function App() {
     notify(`Đã cập nhật dữ liệu cho ngày ${dateKey}!`);
   };
 
+  // Thêm bài tập trực tiếp từ Mô hình Giải phẫu 3D vào Lịch tập hôm nay
+  const handleAddExerciseFromAnatomy = (ex) => {
+    const newEx = {
+      name: ex.name,
+      muscle: ex.targetMuscle,
+      sets: 3,
+      reps: '8–12',
+      weight: 20,
+      note: ex.vietnameseName || ''
+    };
+    setData(d => ({
+      ...d,
+      exercises: [...(d.exercises || []), newEx]
+    }));
+    playTing();
+    notify(`Đã thêm bài "${ex.name}" vào Lịch tập hôm nay!`);
+  };
+
   const navItems = [
     ['Dashboard', I.LayoutDashboard, 'Tổng quan'],
     ['Calendar', I.Calendar, 'Lịch tháng'],
     ['Workout', I.Dumbbell, 'Lịch tập'],
+    ['Anatomy3D', I.Activity, 'Mô hình Cơ 3D'],
     ['Recipes', I.ChefHat, 'Món ăn'],
     ['Nutrition', I.Utensils, 'Dinh dưỡng'],
     ['Recovery', I.BatteryMedium, 'Hồi phục'],
@@ -989,6 +1009,7 @@ function App() {
                 {page === 'Dashboard' && `Chào ngày mới, ${data.profile.name} 👋`}
                 {page === 'Calendar' && 'Lịch tháng & Thống kê Chuyên cần 📅'}
                 {page === 'Workout' && 'Lịch tập & Nhật ký buổi tập 🏋️'}
+                {page === 'Anatomy3D' && 'Mô hình Giải Phẫu Cơ Bắp 3D & Bài tập Chuẩn 🦾'}
                 {page === 'Recipes' && 'Khám phá Món ăn & Video nấu ăn 🍳'}
                 {page === 'Nutrition' && 'Nhật ký Dinh dưỡng & Bữa ăn 🥗'}
                 {page === 'Recovery' && 'Điểm phục hồi & Sẵn sàng tập luyện 🟢'}
@@ -1092,6 +1113,14 @@ function App() {
             data={data}
             setData={setData}
             notify={notify}
+          />
+        )}
+
+        {page === 'Anatomy3D' && (
+          <Anatomy3DTab
+            onAddExerciseToToday={handleAddExerciseFromAnatomy}
+            colorTheme={colorTheme}
+            dark={dark}
           />
         )}
 
