@@ -151,6 +151,7 @@ const seed = {
     }
   ],
   combos: defaultCombos,
+  customAnatomyExercises: [],
   history: initialHistory,
   expenses: [
     { item: 'Ức gà tươi (500g)', amount: 45000, cat: 'Thịt' },
@@ -569,6 +570,7 @@ function App() {
         recipes,
         combos: (saved.combos && saved.combos.length) ? saved.combos : defaultCombos,
         myRecipes: saved.myRecipes || seed.myRecipes,
+        customAnatomyExercises: saved.customAnatomyExercises || [],
         exercises: saved.exercises && saved.exercises.length ? saved.exercises : seed.exercises,
         history: saved.history || initialHistory,
         todayStatus: saved.todayStatus || 'workout',
@@ -898,6 +900,25 @@ function App() {
     notify(`Đã thêm bài "${ex.name}" vào Lịch tập hôm nay!`);
   };
 
+  // Tạo bài tập mới và lưu video vào Mô hình 3D
+  const handleCreateAnatomyExercise = (exercise) => {
+    setData(d => ({
+      ...d,
+      customAnatomyExercises: [exercise, ...(d.customAnatomyExercises || [])]
+    }));
+    playTing();
+    notify(`Đã lưu bài tập mới "${exercise.name}"!`);
+  };
+
+  // Xóa bài tập tự tạo khỏi Mô hình 3D
+  const handleDeleteAnatomyExercise = (exerciseId) => {
+    setData(d => ({
+      ...d,
+      customAnatomyExercises: (d.customAnatomyExercises || []).filter(e => e.id !== exerciseId)
+    }));
+    notify('Đã xóa bài tập khỏi thư viện!');
+  };
+
   const navItems = [
     ['Dashboard', I.LayoutDashboard, 'Tổng quan'],
     ['Calendar', I.Calendar, 'Lịch tháng'],
@@ -1118,6 +1139,9 @@ function App() {
 
         {page === 'Anatomy3D' && (
           <Anatomy3DTab
+            customExercises={data.customAnatomyExercises || []}
+            onCreateExercise={handleCreateAnatomyExercise}
+            onDeleteExercise={handleDeleteAnatomyExercise}
             onAddExerciseToToday={handleAddExerciseFromAnatomy}
             colorTheme={colorTheme}
             dark={dark}
